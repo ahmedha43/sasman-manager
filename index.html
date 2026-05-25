@@ -3,1789 +3,1353 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ISP MANAGER - تطبيق إدارة مشتركين الانترنت</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;900&family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <title>دليل إعداد وتشغيل Sasman Manager V5 على MikroTik</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@300;400;500;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+    <!-- Prism.js for Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-bash.min.js"></script>
+
+    <!-- AOS Animation -->
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Tajawal', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#6366F1',      // Indigo - اللون الأساسي
+                        secondary: '#8B5CF6',    // Purple - اللون الثانوي
+                        accent: '#10B981',       // Emerald - لون التمييز
+                        warning: '#F59E0B',      // Amber - التحذيرات
+                        danger: '#EF4444',       // Red - الأخطاء
+                        dark: '#0F172A',         // Slate-900 - خلفية داكنة
+                        darker: '#020617',       // Slate-950 - خلفية أغمق
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
-        :root {
-            --primary-color: #0d47a1;
-            --secondary-color: #1976d2;
-            --accent-color: #2196f3;
-            --light-color: #bbdefb;
-            --dark-color: #002171;
-            --text-color: #263238;
-            --background-color: #f5f7fa;
-            --zain-color: #6200ee;
-            --binance-color: #F3BA2F;
-            --monthly-color: #4CAF50;
-            --text-yearly-color: #9C27B0;
-            --yearly-color: #FF5722;
-            --gradient-1: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            --gradient-2: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            --gradient-3: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-            --gradient-4: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
-            --gradient-5: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
-            --gradient-6: linear-gradient(135deg, #30cfd0 0%, #330867 100%);
-            --gradient-7: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            --gradient-8: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
-            --gradient-9: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
-            --gradient-10: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Tajawal', 'Cairo', sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            direction: rtl;
-            overflow-x: hidden;
+            font-family: 'Tajawal', sans-serif;
+            scroll-behavior: smooth;
         }
 
-        /* Animations */
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(5deg); }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 10px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0F172A;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #6366F1 0%, #8B5CF6 100%);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #4F46E5 0%, #7C3AED 100%);
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
+        /* Gradient Text */
+        .gradient-text {
+            background: linear-gradient(135deg, #6366F1 0%, #A855F7 50%, #EC4899 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: gradient-shift 3s ease infinite;
         }
 
-        @keyframes shimmer {
-            0% { background-position: -1000px 0; }
-            100% { background-position: 1000px 0; }
+        @keyframes gradient-shift {
+            0%, 100% { filter: hue-rotate(0deg); }
+            50% { filter: hue-rotate(10deg); }
         }
 
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
+        /* Glass Effect */
+        .glass {
+            background: rgba(15, 23, 42, 0.8);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(99, 102, 241, 0.2);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
         }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
+        .glass:hover {
+            border-color: rgba(139, 92, 246, 0.4);
+            box-shadow: 0 8px 32px rgba(99, 102, 241, 0.2);
         }
 
-        /* Global Styles */
-        .gradient-bg {
-            background: var(--gradient-6);
+        /* Code Block Styling */
+        pre[class*="language-"] {
+            border-radius: 0.75rem;
+            direction: ltr;
+            text-align: left;
             position: relative;
-            overflow: hidden;
         }
 
-        .gradient-bg::before {
-            content: "";
+        .copy-btn {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-            opacity: 0.4;
-        }
-
-        .section-title {
-            position: relative;
-            display: inline-block;
-            font-weight: 900;
-            font-family: 'Cairo', sans-serif;
-        }
-
-        .section-title::after {
-            content: "";
-            position: absolute;
-            bottom: -10px;
-            left: 0;
-            width: 80px;
-            height: 4px;
-            background: var(--gradient-3);
-            border-radius: 2px;
-        }
-
-        /* Package Cards */
-        .package-card {
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            position: relative;
-            background: white;
-            transform-style: preserve-3d;
-            perspective: 1000px;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .package-card:hover {
-            transform: translateY(-15px) rotateX(5deg);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        }
-
-        .package-card.featured::before {
-            content: "الأكثر مبيعاً";
-            position: absolute;
-            top: 15px;
-            left: -35px;
-            background: var(--gradient-2);
+            top: 0.5rem;
+            left: 0.5rem;
+            background: linear-gradient(135deg, #6366F1, #8B5CF6);
+            border: 1px solid rgba(255,255,255,0.2);
             color: white;
-            padding: 5px 40px;
-            transform: rotate(-45deg);
-            font-size: 0.8rem;
-            font-weight: bold;
-            z-index: 10;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .package-card .card-header {
-            position: relative;
-            overflow: hidden;
-            padding: 2.5rem;
-            color: white;
-            text-align: center;
-            border-radius: 20px 20px 0 0;
-        }
-
-        .package-card .card-header::after {
-            content: "";
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 5px;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
-            animation: shimmer 2s infinite;
-        }
-
-        .monthly-header {
-            background: var(--gradient-4);
-        }
-
-        .text-yearly-header {
-            background: var(--gradient-1);
-        }
-
-        .yearly-header {
-            background: var(--gradient-5);
-        }
-
-        .package-card .card-body {
-            padding: 2.5rem;
-            flex-grow: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .price-tag {
-            font-size: 3rem;
-            font-weight: 900;
-            margin: 0.5rem 0;
-            line-height: 1;
-            font-family: 'Cairo', sans-serif;
-        }
-
-        .price-period {
-            font-size: 1.2rem;
-            opacity: 0.9;
+            padding: 0.4rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            opacity: 0;
             font-weight: 600;
         }
 
-        .limited-offer {
-            background: rgba(255, 0, 0, 0.1);
-            border: 1px dashed rgba(255, 0, 0, 0.3);
-            border-radius: 30px;
-            padding: 0.5rem 1.2rem;
-            margin-top: 1rem;
-            color: #d32f2f;
-            font-weight: 700;
-            display: inline-block;
-            font-size: 0.9rem;
-            animation: pulse 2s infinite;
+        pre:hover .copy-btn {
+            opacity: 1;
         }
 
-        .unlimited-features {
-            background: rgba(0, 150, 136, 0.1);
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin: 1.5rem 0;
-            border: 1px solid rgba(0, 150, 136, 0.2);
-        }
-
-        .unlimited-features h4 {
-            color: #00796b;
-            font-weight: 800;
-            margin-bottom: 0.8rem;
-            display: flex;
-            align-items: center;
-            font-size: 1.2rem;
-        }
-
-        .unlimited-features h4 i {
-            margin-left: 0.5rem;
-        }
-
-        .unlimited-features ul {
-            list-style: none;
-            padding-right: 0;
-        }
-
-        .unlimited-features li {
-            margin-bottom: 0.8rem;
-            padding-right: 1.8rem;
-            position: relative;
-            font-weight: 600;
-            font-size: 1.05rem;
-        }
-
-        .unlimited-features li::before {
-            content: "\f00c";
-            font-family: "Font Awesome 5 Free";
-            font-weight: 900;
-            position: absolute;
-            right: 0;
-            color: #00796b;
-            font-size: 1rem;
-        }
-
-        /* Buttons */
-        .btn-primary {
-            background: var(--gradient-3);
-            color: white;
-            padding: 16px 32px;
-            border-radius: 50px;
-            font-weight: 800;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
-            display: inline-block;
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-            font-family: 'Cairo', sans-serif;
-            font-size: 1.1rem;
-            margin-top: auto;
-            text-align: center;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-primary::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateX(-100%);
-            transition: transform 0.6s;
-            z-index: -1;
-        }
-
-        .btn-primary:hover::before {
-            transform: translateX(0);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(33, 150, 243, 0.4);
-        }
-
-        .btn-zain {
-            background: var(--gradient-1);
-            color: white;
-            padding: 16px 32px;
-            border-radius: 50px;
-            font-weight: 800;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(98, 0, 238, 0.3);
-            display: inline-block;
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-            font-family: 'Cairo', sans-serif;
-            font-size: 1.1rem;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-zain::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateX(-100%);
-            transition: transform 0.6s;
-            z-index: -1;
-        }
-
-        .btn-zain:hover::before {
-            transform: translateX(0);
-        }
-
-        .btn-zain:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(98, 0, 238, 0.4);
-        }
-
-        .btn-binance {
-            background: var(--gradient-5);
-            color: white;
-            padding: 16px 32px;
-            border-radius: 50px;
-            font-weight: 800;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(243, 186, 47, 0.3);
-            display: inline-block;
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-            font-family: 'Cairo', sans-serif;
-            font-size: 1.1rem;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-binance::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateX(-100%);
-            transition: transform 0.6s;
-            z-index: -1;
-        }
-
-        .btn-binance:hover::before {
-            transform: translateX(0);
-        }
-
-        .btn-binance:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(243, 186, 47, 0.4);
-        }
-
-        .btn-telegram {
-            background: var(--gradient-3);
-            color: white;
-            padding: 16px 32px;
-            border-radius: 50px;
-            font-weight: 800;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 136, 204, 0.3);
-            display: inline-block;
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-            font-family: 'Cairo', sans-serif;
-            font-size: 1.1rem;
-            border: none;
-            cursor: pointer;
-        }
-
-        .btn-telegram::before {
-            content: "";
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateX(-100%);
-            transition: transform 0.6s;
-            z-index: -1;
-        }
-
-        .btn-telegram:hover::before {
-            transform: translateX(0);
-        }
-
-        .btn-telegram:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(0, 136, 204, 0.4);
-        }
-
-        /* Language Switcher */
-        .lang-switcher {
-            display: flex;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 4px;
-            border-radius: 50px;
-            backdrop-filter: blur(10px);
-        }
-
-        .lang-btn {
-            padding: 8px 16px;
-            border-radius: 50px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            background: transparent;
-            color: white;
-            border: 2px solid transparent;
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .lang-btn.active {
-            background: white;
-            color: var(--primary-color);
-            border-color: white;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-        }
-
-        .lang-btn:hover:not(.active) {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.3);
-        }
-
-        /* Feature List */
-        .feature-list li {
-            margin-bottom: 16px;
-            position: relative;
-            padding-right: 32px;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            font-size: 1.05rem;
-        }
-
-        .feature-list li:hover {
-            transform: translateX(5px);
-        }
-
-        .feature-list li::before {
-            content: "\f00c";
-            font-family: "Font Awesome 5 Free";
-            font-weight: 900;
-            position: absolute;
-            right: 0;
-            color: var(--accent-color);
-            background: rgba(33, 150, 243, 0.1);
-            width: 26px;
-            height: 26px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 14px;
-        }
-
-        /* Payment Method */
-        .payment-method {
-            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: 0 15px 35px -5px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            background: white;
-            transform-style: preserve-3d;
-            perspective: 1000px;
-        }
-
-        .payment-method:hover {
-            transform: translateY(-10px) rotateX(5deg);
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        }
-
-        .step-item {
-            position: relative;
-            padding-right: 50px;
-            margin-bottom: 18px;
-            transition: all 0.3s ease;
-            font-weight: 600;
-            font-size: 1.05rem;
-        }
-
-        .step-item:hover {
-            transform: translateX(5px);
-        }
-
-        .step-number {
-            position: absolute;
-            right: 0;
-            top: 0;
-            width: 38px;
-            height: 38px;
-            background: var(--gradient-3);
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: bold;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            font-size: 1.1rem;
-        }
-
-        /* Logo Styles */
-        .zain-logo {
-            max-height: 110px;
-            width: auto;
-            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
-            transition: all 0.3s ease;
-        }
-
-        .zain-logo:hover {
+        .copy-btn:hover {
             transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
         }
 
-        .binance-logo {
-            max-height: 110px;
-            width: auto;
-            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+        .copy-btn.copied {
+            background: linear-gradient(135deg, #10B981, #059669);
+            border-color: #10B981;
+        }
+
+        /* Step Cards */
+        .step-card {
+            border-right: 4px solid #6366F1;
             transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
         }
 
-        .binance-logo:hover {
-            transform: scale(1.05);
-        }
-
-        /* Floating Shapes */
-        .floating-shapes {
+        .step-card::before {
+            content: '';
             position: absolute;
             top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-            z-index: 0;
-        }
-
-        .shape {
-            position: absolute;
-            opacity: 0.1;
-            border-radius: 50%;
-            animation: float 20s infinite ease-in-out;
-        }
-
-        .shape-1 {
-            width: 300px;
-            height: 300px;
-            background: radial-gradient(circle, var(--accent-color), transparent);
-            top: -150px;
-            left: -150px;
-            animation-delay: 0s;
-        }
-
-        .shape-2 {
-            width: 200px;
-            height: 200px;
-            background: radial-gradient(circle, var(--light-color), transparent);
-            bottom: -100px;
-            right: 100px;
-            animation-delay: 2s;
-        }
-
-        .shape-3 {
-            width: 150px;
-            height: 150px;
-            background: radial-gradient(circle, var(--secondary-color), transparent);
-            top: 50%;
-            right: -75px;
-            animation-delay: 4s;
-        }
-
-        /* QR Modal */
-        .qr-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0, 0, 0, 0.8);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-            backdrop-filter: blur(5px);
-        }
-
-        .qr-modal.active {
-            display: flex;
-            animation: fadeIn 0.3s ease;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .qr-content {
-            background-color: white;
-            border-radius: 20px;
-            padding: 30px;
-            max-width: 450px;
-            width: 90%;
-            position: relative;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            transform: scale(0.9);
-            animation: scaleIn 0.3s ease forwards;
-        }
-
-        @keyframes scaleIn {
-            to { transform: scale(1); }
-        }
-
-        .close-modal {
-            position: absolute;
-            top: 15px;
-            left: 15px;
-            font-size: 24px;
-            cursor: pointer;
-            color: #777;
-            transition: all 0.3s ease;
-            width: 36px;
-            height: 36px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-        }
-
-        .close-modal:hover {
-            color: white;
-            background-color: #f44336;
-            transform: rotate(90deg);
-        }
-
-        .qr-code {
-            width: 220px;
-            height: 220px;
-            margin: 20px auto;
-            position: relative;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-            transition: all 0.3s ease;
-        }
-
-        .qr-code:hover {
-            transform: scale(1.03);
-            box-shadow: 0 12px 25px rgba(0, 0, 0, 0.2);
-        }
-
-        .qr-code img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .account-number {
-            font-size: 1.4rem;
-            font-weight: bold;
-            color: var(--primary-color);
-            background: linear-gradient(45deg, var(--light-color), white);
-            padding: 12px 24px;
-            border-radius: 30px;
-            display: inline-block;
-            margin: 15px 0;
-            letter-spacing: 1px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            border: 1px solid rgba(33, 150, 243, 0.2);
-            font-family: 'Cairo', sans-serif;
-        }
-
-        .copy-button {
-            background: var(--gradient-3);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            padding: 12px 24px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: inline-flex;
-            align-items: center;
-            margin-top: 15px;
-            box-shadow: 0 4px 10px rgba(33, 150, 243, 0.3);
-            font-family: 'Cairo', sans-serif;
-        }
-
-        .copy-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 15px rgba(33, 150, 243, 0.4);
-        }
-
-        .copy-button i {
-            margin-left: 8px;
-        }
-
-        .qr-instructions {
-            font-size: 1rem;
-            color: #555;
-            margin-top: 20px;
-            text-align: center;
-            line-height: 1.6;
-            font-weight: 600;
-        }
-
-        /* Hero Section */
-        .hero-title {
-            position: relative;
-            display: inline-block;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-            font-weight: 900;
-            font-family: 'Cairo', sans-serif;
-        }
-
-        .hero-title::after {
-            content: "";
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100px;
-            height: 4px;
-            background: linear-gradient(90deg, transparent, var(--light-color), transparent);
-            border-radius: 2px;
-        }
-
-        /* Contact Card */
-        .contact-card {
-            transition: all 0.3s ease;
-            border-radius: 16px;
-            overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            background: white;
-        }
-
-        .contact-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
-        }
-
-        .contact-icon {
-            width: 70px;
-            height: 70px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 15px;
-            background: var(--gradient-3);
-            color: white;
-            font-size: 28px;
-            box-shadow: 0 5px 15px rgba(33, 150, 243, 0.3);
-            transition: all 0.3s ease;
-        }
-
-        .contact-card:hover .contact-icon {
-            transform: scale(1.1) rotate(5deg);
-        }
-
-        /* Footer Link */
-        .footer-link {
-            position: relative;
-            transition: all 0.3s ease;
-        }
-
-        .footer-link::after {
-            content: "";
-            position: absolute;
-            bottom: -2px;
             right: 0;
             width: 0;
-            height: 2px;
-            background-color: var(--accent-color);
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(99, 102, 241, 0.1));
             transition: width 0.3s ease;
         }
 
-        .footer-link:hover::after {
+        .step-card:hover {
+            border-right-width: 8px;
+            border-right-color: #8B5CF6;
+            transform: translateX(-4px);
+        }
+
+        .step-card:hover::before {
             width: 100%;
         }
 
-        /* FAQ & Privacy Section */
-        .faq-section, .privacy-section {
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-            border-radius: 20px;
-            padding: 3rem;
-            margin: 2rem 0;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-        }
-
-        .faq-item {
-            background: white;
-            border-radius: 15px;
+        /* Architecture Diagram */
+        .arch-box {
+            border: 2px solid rgba(99, 102, 241, 0.5);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.05), rgba(139, 92, 246, 0.05));
+            border-radius: 1rem;
             padding: 1.5rem;
-            margin-bottom: 1rem;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            position: relative;
             transition: all 0.3s ease;
         }
 
-        .faq-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        .arch-box:hover {
+            border-color: rgba(139, 92, 246, 0.8);
+            box-shadow: 0 8px 24px rgba(99, 102, 241, 0.2);
         }
 
-        .faq-question {
-            font-weight: 700;
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
+        .arch-arrow {
+            text-align: center;
+            color: #8B5CF6;
+            font-size: 1.5rem;
+            margin: 0.5rem 0;
+            animation: bounce-arrow 2s infinite;
         }
 
-        .faq-answer {
-            color: #555;
-            line-height: 1.6;
+        @keyframes bounce-arrow {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero-title {
-                font-size: 2.5rem !important;
+        /* Progress Bar */
+        #progressBar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #6366F1, #8B5CF6, #A855F7);
+            z-index: 9999;
+            transition: width 0.1s;
+            box-shadow: 0 0 10px rgba(99, 102, 241, 0.5);
+        }
+
+        /* Mobile Menu */
+        .mobile-menu {
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        .mobile-menu.open {
+            transform: translateX(0);
+        }
+
+        /* FAQ Accordion */
+        .faq-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+        }
+        .faq-content.active {
+            max-height: 500px;
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: relative;
+        }
+        .tooltip::after {
+            content: attr(data-tip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #0f172a;
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .tooltip:hover::after {
+            opacity: 1;
+        }
+
+        /* Pulse Animation */
+        @keyframes pulse-glow {
+            0%, 100% {
+                box-shadow: 0 0 20px rgba(99, 102, 241, 0.4),
+                            0 0 40px rgba(139, 92, 246, 0.2);
             }
-            
-            .package-grid {
-                grid-template-columns: 1fr !important;
+            50% {
+                box-shadow: 0 0 30px rgba(99, 102, 241, 0.6),
+                            0 0 60px rgba(139, 92, 246, 0.4);
             }
-            
-            .price-tag {
-                font-size: 2.5rem;
-            }
-                .section-title {
-                    font-size: 2rem !important;
-                }
-                .card-header, .card-body, .unlimited-features, .payment-method, .contact-card, .bg-white.p-8, .bg-white.p-10 {
-                    padding: 1.2rem !important;
-                }
-                .btn-primary, .btn-zain, .btn-binance, .btn-telegram {
-                    padding: 12px 18px !important;
-                    font-size: 1rem !important;
-                    min-width: 120px;
-                }
-                .copy-button {
-                    padding: 10px 16px !important;
-                    font-size: 0.95rem !important;
-                }
-                .contact-icon {
-                    width: 56px;
-                    height: 56px;
-                    font-size: 22px;
-                }
-                .account-number {
-                    font-size: 1.1rem !important;
-                    padding: 8px 16px !important;
-                }
-                #whatsappForm input {
-                    font-size: 1rem !important;
-                    padding: 10px !important;
-                }
-                #whatsappForm button {
-                    font-size: 1rem !important;
-                    padding: 12px !important;
-                }
-                .faq-section, .privacy-section {
-                    padding: 1.2rem !important;
-                }
-                .container {
-                    padding-left: 0.5rem !important;
-                    padding-right: 0.5rem !important;
-                }
-                .rounded-3xl, .rounded-2xl {
-                    border-radius: 1rem !important;
-                }
-                .mb-16 {
-                    margin-bottom: 2rem !important;
-                }
-                .mb-8 {
-                    margin-bottom: 1.2rem !important;
-                }
-                .py-24 {
-                    padding-top: 2.5rem !important;
-                    padding-bottom: 2.5rem !important;
-                }
-                .gap-10 {
-                    gap: 1.2rem !important;
-                }
-                .max-w-3xl, .max-w-4xl, .max-w-5xl, .max-w-6xl, .max-w-2xl {
-                    max-width: 100% !important;
-                }
-                .flex {
-                    flex-direction: column !important;
-                    gap: 0.8rem !important;
-                }
-                .grid-cols-2 {
-                    grid-template-columns: 1fr !important;
-                }
-                .space-x-6, .space-x-reverse {
-                    gap: 0.8rem !important;
-                }
-                .sticky {
-                    position: static !important;
-                }
-                .z-50 {
-                    z-index: 10 !important;
-                }
-                .ml-2, .ml-3, .ml-1 {
-                    margin-left: 0.3rem !important;
-                }
-                .mb-6 {
-                    margin-bottom: 1rem !important;
-                }
-                .mb-4 {
-                    margin-bottom: 0.8rem !important;
-                }
-                .mb-10 {
-                    margin-bottom: 1.2rem !important;
-                }
-                .mb-12 {
-                    margin-bottom: 1.2rem !important;
-                }
-                .mt-12, .mt-16 {
-                    margin-top: 1.2rem !important;
-                }
-                .gap-8 {
-                    gap: 1rem !important;
-                }
-                .w-24 {
-                    width: 56px !important;
-                    height: 56px !important;
-                }
-                .text-2xl {
-                    font-size: 1.3rem !important;
-                }
-                .text-4xl {
-                    font-size: 1.7rem !important;
-                }
-                .text-5xl, .md\:text-6xl {
-                    font-size: 2.2rem !important;
-                }
-                .text-xl, .md\:text-2xl {
-                    font-size: 1.1rem !important;
-                }
-                .text-lg, .md\:text-xl {
-                    font-size: 1rem !important;
-                }
-                .rounded-full {
-                    border-radius: 1.5rem !important;
-                }
-                .shadow-xl, .shadow-lg {
-                    box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
-                }
-            }
-        </style>
+        }
+        .pulse-glow {
+            animation: pulse-glow 2s infinite;
+        }
+
+        /* Floating Animation */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .float-animation {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        /* Hero Background */
+        .hero-bg {
+            background: linear-gradient(135deg, #020617 0%, #1E1B4B 30%, #312E81 60%, #0F172A 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background:
+                radial-gradient(circle at 20% 50%, rgba(99, 102, 241, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(99,102,241,0.1)" stroke-width="0.5"/></svg>');
+            background-size: 100% 100%, 100% 100%, 60px 60px;
+            opacity: 0.6;
+            animation: hero-pulse 10s ease-in-out infinite;
+        }
+
+        @keyframes hero-pulse {
+            0%, 100% { opacity: 0.6; }
+            50% { opacity: 0.8; }
+        }
+    </style>
+<base target="_blank">
 </head>
-<body>
+<body class="bg-dark text-gray-100 antialiased">
+
+    <!-- Progress Bar -->
+    <div id="progressBar" style="width: 0%"></div>
+
     <!-- Navigation -->
-    <nav class="gradient-bg text-white py-4 sticky top-0 z-50 shadow-lg">
-        <div class="container mx-auto px-4 flex justify-between items-center">
-            <div class="flex items-center">
-                <i class="fas fa-wifi text-3xl ml-3"></i>
-                <span class="text-xl font-bold">ISP MANAGER</span>
-            </div>
-            <div class="hidden md:flex space-x-reverse space-x-6">
-                <a href="#about" class="hover:text-blue-200 transition-all duration-300">عن التطبيق</a>
-                <a href="#packages" class="hover:text-blue-200 transition-all duration-300">الباقات</a>
-                <a href="#payment" class="hover:text-blue-200 transition-all duration-300">طرق الدفع</a>
-                <a href="#contact" class="hover:text-blue-200 transition-all duration-300">تواصل</a>
-            </div>
-            <div class="flex items-center gap-4">
-                <div class="lang-switcher">
-                    <button id="lang-ar" class="lang-btn active">العربية</button>
-                    <button id="lang-en" class="lang-btn">English</button>
+    <nav class="fixed top-0 w-full z-50 glass">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-primary rounded-lg flex items-center justify-center pulse-glow">
+                        <i class="fas fa-server text-white text-lg"></i>
+                    </div>
+                    <span class="font-bold text-xl gradient-text">Sasman V5</span>
                 </div>
-                <div class="md:hidden">
-                    <button id="mobile-menu-button" class="text-white focus:outline-none">
-                        <i class="fas fa-bars text-2xl"></i>
-                    </button>
+
+                <!-- Desktop Menu -->
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="#requirements" class="text-gray-300 hover:text-primary transition-colors text-sm font-medium">المتطلبات</a>
+                    <a href="#overview" class="text-gray-300 hover:text-primary transition-colors text-sm font-medium">نظرة عامة</a>
+                    <a href="#installation" class="text-gray-300 hover:text-primary transition-colors text-sm font-medium">التثبيت</a>
+                    <a href="#troubleshooting" class="text-gray-300 hover:text-primary transition-colors text-sm font-medium">استكشاف الأخطاء</a>
+                    <a href="#faq" class="text-gray-300 hover:text-primary transition-colors text-sm font-medium">الأسئلة الشائعة</a>
                 </div>
-            </div>
-        </div>
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-blue-800 py-2">
-            <div class="container mx-auto px-4 flex flex-col space-y-2">
-                <a href="#about" class="hover:text-blue-200 py-2 transition-all duration-300">عن التطبيق</a>
-                <a href="#packages" class="hover:text-blue-200 py-2 transition-all duration-300">الباقات</a>
-                <a href="#payment" class="hover:text-blue-200 py-2 transition-all duration-300">طرق الدفع</a>
-                <a href="#contact" class="hover:text-blue-200 py-2 transition-all duration-300">تواصل</a>
+
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuBtn" class="md:hidden text-gray-300 hover:text-white">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
             </div>
         </div>
     </nav>
 
+    <!-- Mobile Menu -->
+    <div id="mobileMenu" class="mobile-menu fixed inset-y-0 right-0 w-64 bg-darker z-50 shadow-2xl md:hidden">
+        <div class="p-6">
+            <div class="flex justify-between items-center mb-8">
+                <span class="font-bold text-xl gradient-text">القائمة</span>
+                <button id="closeMobileMenu" class="text-gray-400 hover:text-white">
+                    <i class="fas fa-times text-xl"></i>
+                </button>
+            </div>
+            <div class="flex flex-col gap-4">
+                <a href="#requirements" class="text-gray-300 hover:text-primary transition-colors py-2 border-b border-gray-800">المتطلبات الأساسية</a>
+                <a href="#overview" class="text-gray-300 hover:text-primary transition-colors py-2 border-b border-gray-800">نظرة عامة</a>
+                <a href="#installation" class="text-gray-300 hover:text-primary transition-colors py-2 border-b border-gray-800">خطوات التثبيت</a>
+                <a href="#verification" class="text-gray-300 hover:text-primary transition-colors py-2 border-b border-gray-800">التحقق</a>
+                <a href="#access" class="text-gray-300 hover:text-primary transition-colors py-2 border-b border-gray-800">مسارات الوصول</a>
+                <a href="#troubleshooting" class="text-gray-300 hover:text-primary transition-colors py-2 border-b border-gray-800">استكشاف الأخطاء</a>
+                <a href="#commands" class="text-gray-300 hover:text-primary transition-colors py-2 border-b border-gray-800">أوامر الإدارة</a>
+                <a href="#faq" class="text-gray-300 hover:text-primary transition-colors py-2 border-b border-gray-800">الأسئلة الشائعة</a>
+            </div>
+        </div>
+    </div>
+
     <!-- Hero Section -->
-    <header class="gradient-bg text-white py-24 relative overflow-hidden">
-        <div class="floating-shapes">
-            <div class="shape shape-1"></div>
-            <div class="shape shape-2"></div>
-            <div class="shape shape-3"></div>
-        </div>
-        <div class="container mx-auto px-4 relative z-10">
-            <div class="text-center" data-aos="fade-up">
-                <h1 class="hero-title text-5xl md:text-6xl font-bold mb-6">ISP MANAGER</h1>
-                <p class="text-xl md:text-2xl mb-10 max-w-2xl mx-auto opacity-90">تطبيق احترافي لإدارة مشتركين الانترنت وتسهيل عمليات الاشتراك والدفع</p>
-                <div class="flex flex-wrap justify-center gap-6">
-                    <a href="#packages" class="btn-primary">
-                        <i class="fas fa-list ml-2"></i> عرض الباقات
-                    </a>
-                    <a href="#payment" class="btn-zain">
-                        <i class="fas fa-money-bill-wave ml-2"></i> طرق الدفع
-                    </a>
-                </div>
+    <section class="hero-bg min-h-screen flex items-center justify-center pt-16 relative">
+        <div class="absolute inset-0 bg-gradient-to-t from-dark via-transparent to-transparent"></div>
+        <div class="max-w-5xl mx-auto px-4 text-center relative z-10" data-aos="fade-up">
+            <div class="inline-flex items-center gap-2 bg-primary/10 border border-primary/30 rounded-full px-4 py-2 mb-8">
+                <span class="w-2 h-2 bg-primary rounded-full animate-pulse"></span>
+                <span class="text-primary text-sm font-semibold">الإصدار 5.0 - Docker Container</span>
             </div>
-        </div>
-    </header>
 
-    <!-- About Section -->
-    <section id="about" class="py-24 bg-white">
-        <div class="container mx-auto px-4">
-            <h2 class="section-title text-4xl font-bold mb-16 text-center" data-aos="fade-up">عن التطبيق</h2>
-            <div class="max-w-5xl mx-auto">
-                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl p-10 shadow-xl" data-aos="fade-up" data-aos-delay="100">
-                    <p class="text-lg md:text-xl mb-8 leading-relaxed">
-                        ISP MANAGER هو تطبيق شامل ومبتكر مصمم خصيصاً لمقدمي خدمة الإنترنت (ISPs) لإدارة اشتراكات العملاء بكفاءة عالية. يوفر التطبيق حلاً متكاملاً لإدارة جميع جوانب عملك من اشتراكات العملاء والفوترة والدعم الفني.
-                    </p>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-10 mt-12">
-                        <div class="bg-white p-8 rounded-2xl shadow-lg" data-aos="fade-right" data-aos-delay="200">
-                            <h3 class="text-2xl font-bold mb-6 text-blue-800 flex items-center">
-                                <i class="fas fa-star ml-3 text-yellow-500"></i> الميزات الرئيسية
-                            </h3>
-                            <ul class="feature-list text-lg">
-                                <li>إدارة شاملة للمشتركين</li>
-                                <li>نظام فوترة متقدم</li>
-                                <li>تتبع الاستخدام والحدود</li>
-                                <li>دعم فوري للعملاء</li>
-                                <li>إدارة المخزون والمعدات</li>
-                                <li>تقارير مفصلة وإحصائيات</li>
-                            </ul>
-                        </div>
-                        <div class="bg-white p-8 rounded-2xl shadow-lg" data-aos="fade-left" data-aos-delay="300">
-                            <h3 class="text-2xl font-bold mb-6 text-blue-800 flex items-center">
-                                <i class="fas fa-check-circle ml-3 text-green-500"></i> لماذا تختار ISP MANAGER؟
-                            </h3>
-                            <ul class="feature-list text-lg">
-                                <li>واجهة سهلة الاستخدام</li>
-                                <li>دعم فني على مدار الساعة</li>
-                                <li>حماية البيانات والأمان</li>
-                                <li>متوافق مع جميع الأجهزة</li>
-                                <li>تحديثات مستمرة ومجانية</li>
-                                <li>تكامل مع أنظمة الدفع</li>
-                            </ul>
-                        </div>
-                    </div>
+            <h1 class="text-4xl md:text-6xl lg:text-7xl font-black mb-6 leading-tight">
+                <span class="block text-white">دليل إعداد وتشغيل</span>
+                <span class="gradient-text">Sasman Manager V5</span>
+                <span class="block text-white text-3xl md:text-5xl mt-2">على MikroTik</span>
+            </h1>
+
+            <p class="text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 leading-relaxed">
+                دليل تقني مبسط لإعداد البيئة الافتراضية داخل راوترات MikroTik وتشغيل نظام Sasman Manager لإدارة الشبكات والـ RADIUS بكفاءة عالية
+            </p>
+
+            <div class="flex flex-wrap justify-center gap-4 mb-12">
+                <a href="#installation" class="group bg-gradient-to-r from-primary to-secondary hover:from-secondary hover:to-primary text-white px-8 py-4 rounded-xl font-bold transition-all transform hover:scale-105 shadow-lg shadow-primary/30 hover:shadow-primary/50 flex items-center gap-2">
+                    <i class="fas fa-rocket group-hover:rotate-12 transition-transform"></i>
+                    <span>ابدأ التثبيت</span>
+                </a>
+                <a href="#overview" class="group bg-gray-800 hover:bg-gray-700 text-white px-8 py-4 rounded-xl font-bold transition-all border-2 border-primary/30 hover:border-primary flex items-center gap-2">
+                    <i class="fas fa-book-open group-hover:scale-110 transition-transform"></i>
+                    <span>اقرأ الدليل</span>
+                </a>
+            </div>
+
+            <div class="flex flex-wrap justify-center gap-6 text-sm">
+                <div class="flex items-center gap-2 text-gray-400">
+                    <i class="fas fa-microchip text-primary"></i>
+                    <span>RouterOS 7.4+</span>
+                </div>
+                <div class="flex items-center gap-2 text-gray-400">
+                    <i class="fab fa-docker text-secondary"></i>
+                    <span>Docker Container</span>
+                </div>
+                <div class="flex items-center gap-2 text-gray-400">
+                    <i class="fas fa-shield-alt text-accent"></i>
+                    <span>أمان متقدم</span>
                 </div>
             </div>
+        </div>
+
+        <!-- Scroll Indicator -->
+        <div class="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
+            <i class="fas fa-chevron-down text-primary text-2xl"></i>
         </div>
     </section>
 
-    <!-- Packages Section -->
-    <section id="packages" class="py-24 bg-gradient-to-br from-blue-50 to-indigo-50">
-        <div class="container mx-auto px-4">
-            <h2 class="section-title text-4xl font-bold mb-16 text-center" data-aos="fade-up">الباقات والأسعار</h2>
-            <div class="package-grid grid grid-cols-1 md:grid-cols-3 gap-10 max-w-6xl mx-auto">
-                <!-- Monthly Package -->
-                <div class="package-card" data-aos="fade-up" data-aos-delay="100">
-                    <div class="card-header monthly-header">
-                        <h3 class="text-2xl font-bold">الباقة الشهرية</h3>
-                        <div class="price-tag">4,000</div>
-                        <div class="price-period">دينار عراقي / شهر</div>
-                        <div class="limited-offer">
-                            <i class="fas fa-clock ml-1"></i> عرض محدود
-                        </div>
+    <!-- Requirements Section -->
+    <section id="requirements" class="py-20 bg-darker">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <span class="text-primary font-semibold text-sm uppercase tracking-wider">البداية</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-white mt-2">المتطلبات الأساسية</h2>
+                <div class="w-24 h-1 bg-primary mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-8">
+                <!-- Hardware -->
+                <div class="group bg-dark rounded-2xl p-8 border border-gray-800 hover:border-primary/50 transition-all hover:shadow-2xl hover:shadow-primary/20 hover:-translate-y-1" data-aos="fade-right">
+                    <div class="w-14 h-14 bg-gradient-to-br from-primary/20 to-primary/10 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-server text-primary text-2xl"></i>
                     </div>
-                    <div class="card-body">
-                        <div class="unlimited-features">
-                            <h4><i class="fas fa-infinity ml-2"></i> مميزات غير محدودة</h4>
-                            <ul>
-                                <li>سرعة انترنت عالية</li>
-                                <li>دعم فني 24/7</li>
-                                <li>تقارير مفصلة</li>
-                                <li>إدارة متقدمة للمشتركين</li>
-                            </ul>
-                        </div>
-                        
-                        <a href="#payment" class="btn-primary">اشترك الآن</a>
-                    </div>
+                    <h3 class="text-2xl font-bold text-white mb-4">متطلبات الأجهزة</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-accent mt-1"></i>
+                            <span class="text-gray-300">راوتر MikroTik يدعم ميزة <strong class="text-white">Container</strong> (CHR / CCR / RB series الحديثة)</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-accent mt-1"></i>
+                            <span class="text-gray-300"><strong class="text-white">RouterOS 7.4</strong> أو أحدث</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-accent mt-1"></i>
+                            <span class="text-gray-300">ذاكرة عشوائية (RAM): <strong class="text-white">64 MB فقط</strong> - خفيف جداً! 🚀</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-accent mt-1"></i>
+                            <span class="text-gray-300">مساحة تخزين: <strong class="text-white">200 MB</strong> فقط (حاوية مبنية على SQLite)</span>
+                        </li>
+                    </ul>
                 </div>
 
-                <!-- Text Yearly Package -->
-                <div class="package-card featured" data-aos="fade-up" data-aos-delay="200">
-                    <div class="card-header text-yearly-header">
-                        <h3 class="text-2xl font-bold">الباقة النص سنوية</h3>
-                        <div class="price-tag">15,000</div>
-                        <div class="price-period">دينار عراقي / سنة</div>
-                        <div class="limited-offer">
-                            <i class="fas fa-clock ml-1"></i> عرض محدود
-                        </div>
+                <!-- Software -->
+                <div class="group bg-dark rounded-2xl p-8 border border-gray-800 hover:border-secondary/50 transition-all hover:shadow-2xl hover:shadow-secondary/20 hover:-translate-y-1" data-aos="fade-left">
+                    <div class="w-14 h-14 bg-gradient-to-br from-secondary/20 to-secondary/10 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                        <i class="fas fa-laptop-code text-secondary text-2xl"></i>
                     </div>
-                    <div class="card-body">
-                        <div class="unlimited-features">
-                            <h4><i class="fas fa-infinity ml-2"></i> مميزات غير محدودة</h4>
-                            <ul>
-                                <li>سرعة انترنت فائقة</li>
-                                <li>دعم فني مخصص</li>
-                                <li>تقارير متقدمة</li>
-                                <li>إدارة شاملة للمشتركين</li>
-                                <li>نسخ احتياطية يومية</li>
-                            </ul>
-                        </div>
-                        
-                        <a href="#payment" class="btn-primary">اشترك الآن</a>
-                    </div>
-                </div>
-
-                <!-- Yearly Package -->
-                <div class="package-card" data-aos="fade-up" data-aos-delay="300">
-                    <div class="card-header yearly-header">
-                        <h3 class="text-2xl font-bold">الباقة السنوية</h3>
-                        <div class="price-tag">25,000</div>
-                        <div class="price-period">دينار عراقي / سنة</div>
-                        <div class="limited-offer">
-                            <i class="fas fa-clock ml-1"></i> عرض محدود
-                        </div>
-                    </div>
-                    <div class="card-body">
-                        <div class="unlimited-features">
-                            <h4><i class="fas fa-infinity ml-2"></i> مميزات غير محدودة</h4>
-                            <ul>
-                                <li>سرعة انترنت استثنائية</li>
-                                <li>دعم فني مميز</li>
-                                <li>تقارير مخصصة</li>
-                                <li>إدارة متقدمة للمشتركين</li>
-                                <li>نسخ احتياطية تلقائية</li>
-                                <li>تخصيص كامل للتطبيق</li>
-                            </ul>
-                        </div>
-                        
-                        <a href="#payment" class="btn-primary">اشترك الآن</a>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="max-w-4xl mx-auto mt-16 bg-gradient-to-r from-red-50 to-yellow-50 rounded-3xl p-8 shadow-xl border-2 border-dashed border-red-200" data-aos="fade-up" data-aos-delay="400">
-                <div class="text-center">
-                    <h3 class="text-2xl font-bold mb-4 text-red-600">
-                        <i class="fas fa-fire ml-2"></i> عروض محدودة
-                    </h3>
-                    <p class="text-lg text-gray-700">
-                        جميع الأسعار المعروضة هي عروض خاصة لفترة محدودة. استغل الفرصة واحصل على أفضل باقات الإنترنت غير المحدودة بأفضل الأسعار!
-                    </p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Payment Section -->
-    <section id="payment" class="py-24 bg-white">
-        <div class="container mx-auto px-4">
-            <h2 class="section-title text-4xl font-bold mb-16 text-center" data-aos="fade-up">طرق الدفع</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-10 max-w-5xl mx-auto">
-                <!-- Zain Cash Payment Method -->
-                <div class="payment-method bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8" data-aos="fade-right" data-aos-delay="100">
-                    <div class="text-center mb-8">
-                        <h3 class="text-2xl font-bold mb-4">الدفع داخل العراق</h3>
-                        <p class="text-lg mb-6 text-gray-600">نقبل الدفع عبر زين كاش</p>
-                        <div class="flex justify-center mb-6">
-                            <img src="https://sfile.ChatGLM.cn/images-ppt/42b5943ffef5.png" alt="Zain Cash Logo" class="zain-logo">
-                        </div>
-                    </div>
-                    
-                    <div class="bg-white rounded-xl p-6 shadow-lg mb-8">
-                        <h4 class="text-xl font-bold mb-6 text-blue-800 flex items-center">
-                            <i class="fas fa-credit-card ml-3"></i> كيفية الدفع عبر زين كاش
-                        </h4>
-                        <div class="space-y-5">
-                            <div class="step-item">
-                                <div class="step-number">1</div>
-                                <p>افتح تطبيق ISP MANAGER</p>
-                            </div>
-                            <div class="step-item">
-                                <div class="step-number">2</div>
-                                <p>اذهب إلى الإعدادات</p>
-                            </div>
-                            <div class="step-item">
-                                <div class="step-number">3</div>
-                                <p>اضغط على تجديد الاشتراك</p>
-                            </div>
-                            <div class="step-item">
-                                <div class="step-number">4</div>
-                                <p>اختر الباقة المناسبة</p>
-                            </div>
-                            <div class="step-item">
-                                <div class="step-number">5</div>
-                                <p>اختر "شراء" واختر وسيلة الدفع</p>
-                            </div>
-                            <div class="step-item">
-                                <div class="step-number">6</div>
-                                <p>اختر زين كاش كوسيلة دفع</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="text-center">
-                        <button id="zain-cash-btn" class="btn-zain">
-                            <i class="fas fa-credit-card ml-2"></i> دفع عبر زين كاش
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Binance Payment Method -->
-                <div class="payment-method bg-gradient-to-br from-yellow-50 to-amber-50 rounded-2xl p-8" data-aos="fade-left" data-aos-delay="200">
-                    <div class="text-center mb-8">
-                        <h3 class="text-2xl font-bold mb-4">الدفع خارج العراق</h3>
-                        <p class="text-lg mb-6 text-gray-600">نقبل الدفع عبر بايننس</p>
-                        <div class="flex justify-center mb-6">
-                            <img src="https://sfile.ChatGLM.cn/images-ppt/6bd06db9f689.png" alt="Binance Logo" class="binance-logo">
-                        </div>
-                    </div>
-                    
-                    <div class="bg-white rounded-xl p-6 shadow-lg mb-8">
-                        <h4 class="text-xl font-bold mb-6 text-yellow-800 flex items-center">
-                            <i class="fas fa-credit-card ml-3"></i> كيفية الدفع عبر بايننس
-                        </h4>
-                        <div class="space-y-5">
-                            <div class="step-item">
-                                <div class="step-number">1</div>
-                                <p>افتح تطبيق ISP MANAGER</p>
-                            </div>
-                            <div class="step-item">
-                                <div class="step-number">2</div>
-                                <p>اذهب إلى الإعدادات</p>
-                            </div>
-                            <div class="step-item">
-                                <div class="step-number">3</div>
-                                <p>اضغط على تجديد الاشتراك</p>
-                            </div>
-                            <div class="step-item">
-                                <div class="step-number">4</div>
-                                <p>اختر الباقة المناسبة</p>
-                            </div>
-                            <div class="step-item">
-                                <div class="step-number">5</div>
-                                <p>اختر "شراء" واختر وسيلة الدفع</p>
-                            </div>
-                            <div class="step-item">
-                                <div class="step-number">6</div>
-                                <p>اختر بايننس كوسيلة دفع</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="text-center">
-                        <button id="binance-btn" class="btn-binance">
-                            <i class="fas fa-credit-card ml-2"></i> دفع عبر بايننس
-                        </button>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="max-w-4xl mx-auto mt-16 bg-gradient-to-br from-blue-50 to-indigo-50 rounded-3xl p-10 shadow-xl" data-aos="fade-up" data-aos-delay="300">
-                <h3 class="text-2xl font-bold mb-8 text-center">مميزات الدفع الإلكتروني</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div class="bg-white rounded-2xl p-8 shadow-lg" data-aos="fade-right" data-aos-delay="400">
-                        <h4 class="text-xl font-bold mb-6 text-blue-800 flex items-center">
-                            <i class="fas fa-shield-alt ml-3"></i> الدفع عبر زين كاش
-                        </h4>
-                        <ul class="feature-list">
-                            <li>دفع آمن ومشفر</li>
-                            <li>تجديد فوري للاشتراك</li>
-                            <li>لا حاجة لبطاقات ائتمان</li>
-                            <li>متاح على مدار الساعة</li>
-                            <li>إشعارات فورية بالدفع</li>
-                        </ul>
-                    </div>
-                    
-                    <div class="bg-white rounded-2xl p-8 shadow-lg" data-aos="fade-left" data-aos-delay="500">
-                        <h4 class="text-xl font-bold mb-6 text-yellow-800 flex items-center">
-                            <i class="fas fa-globe ml-3"></i> الدفع عبر بايننس
-                        </h4>
-                        <ul class="feature-list">
-                            <li>دفع آمن وموثوق عالمياً</li>
-                            <li>تحويل فوري للاشتراك</li>
-                            <li>متعدد العملات الرقمية</li>
-                            <li>متاح في أكثر من 180 دولة</li>
-                            <li>رسوم تحويل منخفضة</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="py-24 bg-gradient-to-br from-blue-50 to-indigo-50">
-        <div class="container mx-auto px-4">
-            <h2 class="section-title text-4xl font-bold mb-16 text-center" data-aos="fade-up">معلومات الاتصال</h2>
-            <div class="max-w-2xl mx-auto bg-white rounded-3xl shadow-xl p-10" data-aos="fade-up" data-aos-delay="100">
-                <div class="text-center mb-10">
-                    <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 mb-6">
-                        <i class="fas fa-address-book text-5xl text-blue-500"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-4">تواصل معنا</h3>
-                    <p class="text-gray-600">للاستفسارات والدعم الفني، يمكنك التواصل معنا عبر:</p>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-                    <div class="contact-card bg-gradient-to-br from-blue-50 to-indigo-50 p-8" data-aos="fade-right" data-aos-delay="200">
-                        <div class="contact-icon">
-                            <i class="fas fa-envelope"></i>
-                        </div>
-                        <h4 class="text-lg font-bold mb-2 text-center">البريد الإلكتروني</h4>
-                        <p class="text-center">ahmed.kin99@gmail.com</p>
-                    </div>
-                    <div class="contact-card bg-gradient-to-br from-blue-50 to-indigo-50 p-8" data-aos="fade-left" data-aos-delay="300">
-                        <div class="contact-icon">
-                            <i class="fas fa-phone"></i>
-                        </div>
-                        <h4 class="text-lg font-bold mb-2 text-center">رقم الهاتف</h4>
-                        <p class="text-center">009647834794879</p>
-                    </div>
-                </div>
-                <div class="text-center mb-12">
-                    <form id="whatsappForm" class="max-w-md mx-auto">
-                        <h4 class="text-xl font-bold mb-6 text-green-700 flex items-center justify-center">
-                            <i class="fab fa-whatsapp ml-2"></i> أرسل رسالة واتساب
-                        </h4>
-                        <input type="text" id="waMessage" name="waMessage" class="w-full p-3 mb-4 border rounded-lg text-right" placeholder="اكتب رسالتك هنا..." required>
-                        <button type="submit" class="btn-primary w-full">
-                            <i class="fab fa-whatsapp ml-2"></i> إرسال واتساب
-                        </button>
-                    </form>
-                </div>
-                <div class="text-center" data-aos="fade-up" data-aos-delay="400">
-                    <div class="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-blue-100 to-indigo-100 mb-6">
-                        <i class="fab fa-telegram-plane text-5xl text-blue-500"></i>
-                    </div>
-                    <h3 class="text-2xl font-bold mb-4">انضم إلى قناتنا على تيليجرام</h3>
-                    <p class="mb-8 text-gray-600">انضم إلى قناتنا على تيليجرام للحصول على أحدث تحديثات التطبيق والمساعدة الفنية والمزيد من الميزات الحصرية.</p>
-                    <a href="https://t.me/ispappvip" class="btn-telegram" target="_blank">
-                        <i class="fab fa-telegram-plane ml-2"></i> انضم إلى القناة
-                    </a>
-                </div>
-            </div>
-        </div>
-        <script>
-            document.getElementById('whatsappForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                var msg = document.getElementById('waMessage').value.trim();
-                if (msg) {
-                    var waUrl = 'https://wa.me/qr/U22CICF7BZKDN1?text=' + encodeURIComponent(msg);
-                    window.open(waUrl, '_blank');
-                }
-            });
-        </script>
-    </section>
-
-    <!-- FAQ Section -->
-    <section id="faq" class="py-24 bg-gray-50">
-        <div class="container mx-auto px-4">
-            <h2 class="section-title text-4xl font-bold mb-16 text-center" data-aos="fade-up">الأسئلة الشائعة</h2>
-            <div class="max-w-3xl mx-auto">
-                <div class="faq-section" data-aos="fade-up" data-aos-delay="100">
-                    <div class="space-y-4">
-                        <div class="faq-item">
-                            <div class="faq-question">
-                                <span>كيف يمكنني الاشتراك في التطبيق؟</span>
-                                <i class="fas fa-chevron-down"></i>
-                            </div>
-                            <div class="faq-answer">
-                                يمكنك الاشتراك عبر اختيار الباقة المناسبة من قسم الباقات ثم اتباع خطوات الدفع الإلكتروني.
-                            </div>
-                        </div>
-                        <div class="faq-item">
-                            <div class="faq-question">
-                                <span>هل يوجد دعم فني متواصل؟</span>
-                                <i class="fas fa-chevron-down"></i>
-                            </div>
-                            <div class="faq-answer">
-                                نعم، يوفر التطبيق دعم فني على مدار الساعة عبر وسائل التواصل المتاحة.
-                            </div>
-                        </div>
-                        <div class="faq-item">
-                            <div class="faq-question">
-                                <span>هل يمكنني تغيير الباقة لاحقاً؟</span>
-                                <i class="fas fa-chevron-down"></i>
-                            </div>
-                            <div class="faq-answer">
-                                بإمكانك تغيير الباقة في أي وقت من خلال إعدادات التطبيق واختيار الباقة الجديدة.
-                            </div>
-                        </div>
-                        <div class="faq-item">
-                            <div class="faq-question">
-                                <span>هل بياناتي آمنة؟</span>
-                                <i class="fas fa-chevron-down"></i>
-                            </div>
-                            <div class="faq-answer">
-                                نعم، جميع بيانات المستخدمين محمية وفق أحدث معايير الأمان والخصوصية.
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Privacy Policy Section -->
-    <section id="privacy" class="py-24 bg-gray-100">
-        <div class="container mx-auto px-4">
-            <h2 class="section-title text-4xl font-bold mb-16 text-center" data-aos="fade-up">سياسة الخصوصية والشروط والأحكام</h2>
-            <div class="max-w-3xl mx-auto">
-                <div class="privacy-section" data-aos="fade-up" data-aos-delay="100">
-                    <h3 class="text-2xl font-bold mb-6 text-gray-800">سياسة الخصوصية</h3>
-                    <p class="text-gray-700 mb-8">نحن ملتزمون بحماية خصوصية مستخدمينا. جميع البيانات الشخصية التي يتم جمعها عبر التطبيق تُستخدم فقط لتحسين الخدمة ولا يتم مشاركتها مع أي طرف ثالث.</p>
-                    <h3 class="text-2xl font-bold mb-6 text-gray-800">الشروط والأحكام</h3>
-                    <ul class="list-disc pr-6 text-gray-700 space-y-4">
-                        <li>استخدام التطبيق متاح فقط للأغراض القانونية والمسموح بها.</li>
-                        <li>يجب على المستخدمين الحفاظ على سرية بيانات الدخول وعدم مشاركتها مع الآخرين.</li>
-                        <li>يحق لإدارة التطبيق تحديث أو تعديل الشروط والأحكام في أي وقت.</li>
-                        <li>أي إساءة استخدام للتطبيق تعرض المستخدم للحظر أو إيقاف الخدمة.</li>
+                    <h3 class="text-2xl font-bold text-white mb-4">متطلبات البرمجيات</h3>
+                    <ul class="space-y-3">
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-accent mt-1"></i>
+                            <span class="text-gray-300"><strong class="text-white">WinBox</strong> أو SSH للوصول إلى الراوتر</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-accent mt-1"></i>
+                            <span class="text-gray-300">اتصال <strong class="text-white">إنترنت</strong> لسحب الحاوية من Docker Hub</span>
+                        </li>
+                        <li class="flex items-start gap-3">
+                            <i class="fas fa-check-circle text-accent mt-1"></i>
+                            <span class="text-gray-300">متصفح حديث للوصول إلى لوحة الإدارة</span>
+                        </li>
                     </ul>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Footer -->
-    <footer class="bg-gradient-to-r from-gray-900 to-gray-800 text-white py-16">
-        <div class="container mx-auto px-4">
-            <div class="flex flex-col items-center">
-                <div class="flex items-center mb-6">
-                    <i class="fas fa-wifi text-3xl ml-3"></i>
-                    <span class="text-2xl font-bold">ISP MANAGER</span>
+    <!-- Overview Section -->
+    <section id="overview" class="py-20 bg-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <span class="text-secondary font-semibold text-sm uppercase tracking-wider">فهم النظام</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-white mt-2">نظرة عامة على النظام</h2>
+                <div class="w-24 h-1 bg-secondary mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div data-aos="fade-right">
+                    <p class="text-gray-300 text-lg leading-relaxed mb-8">
+                        <strong class="text-white text-xl">نظام Sasman Manager V5</strong> هو حل متكامل لإدارة الشبكات يعمل داخل حاوية Docker على راوترات MikroTik. يوفر لوحة إدارة ويب حديثة وخادم RADIUS متكامل للمصادقة والمحاسبة.
+                    </p>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="bg-darker p-4 rounded-xl border border-gray-800">
+                            <i class="fas fa-globe text-secondary text-2xl mb-2"></i>
+                            <h4 class="font-bold text-white">لوحة ويب</h4>
+                            <p class="text-sm text-gray-400">حديثة وسهلة الاستخدام</p>
+                        </div>
+                        <div class="bg-darker p-4 rounded-xl border border-gray-800">
+                            <i class="fas fa-broadcast-tower text-primary text-2xl mb-2"></i>
+                            <h4 class="font-bold text-white">RADIUS</h4>
+                            <p class="text-sm text-gray-400">مصادقة ومحاسبة متكاملة</p>
+                        </div>
+                        <div class="bg-darker p-4 rounded-xl border border-gray-800">
+                            <i class="fas fa-chart-bar text-accent text-2xl mb-2"></i>
+                            <h4 class="font-bold text-white">تقارير</h4>
+                            <p class="text-sm text-gray-400">إحصائيات مفصلة</p>
+                        </div>
+                        <div class="bg-darker p-4 rounded-xl border border-gray-800">
+                            <i class="fas fa-lock text-yellow-500 text-2xl mb-2"></i>
+                            <h4 class="font-bold text-white">أمان عالي</h4>
+                            <p class="text-sm text-gray-400">تشفير متقدم</p>
+                        </div>
+                    </div>
                 </div>
-                <p class="text-gray-300 mb-8 text-lg">تطبيق احترافي لإدارة مشتركين الانترنت</p>
-                <div class="flex space-x-reverse space-x-6 mb-8">
-                    <a href="https://t.me/ispappvip/237" class="text-gray-300 hover:text-white transition-all duration-300">
-                        <i class="fab fa-telegram-plane text-2xl"></i>
-                    </a>
-                </div>
-                <div class="border-t border-gray-700 w-full pt-8 text-center text-gray-400">
-                    <p>© 2025 ISP MANAGER. جميع الحقوق محفوظة.</p>
+
+                <!-- Architecture Diagram -->
+                <div class="bg-darker rounded-2xl p-8 border border-gray-800" data-aos="fade-left">
+                    <h3 class="text-xl font-bold text-white mb-6 text-center">معمارية النظام</h3>
+
+                    <div class="arch-box border-primary/50">
+                        <div class="text-center font-bold text-primary mb-2">MikroTik RouterOS</div>
+                        <div class="arch-box border-secondary/50 mx-4">
+                            <div class="text-center font-bold text-secondary mb-2">Container (Docker)</div>
+                            <div class="arch-box border-accent/50 mx-4">
+                                <div class="text-center font-bold text-accent mb-2">Sasman Manager V5</div>
+                                <div class="text-sm text-gray-400 text-center space-y-1">
+                                    <div>Web Panel (Port 80)</div>
+                                    <div>RADIUS (1812/1813)</div>
+                                </div>
+                            </div>
+                            <div class="arch-arrow">↕</div>
+                            <div class="text-center text-sm text-gray-400">VETH (172.17.0.2/24)</div>
+                        </div>
+                        <div class="arch-arrow">↕</div>
+                        <div class="text-center text-sm text-gray-400">Bridge (172.17.0.1/24)</div>
+                        <div class="arch-arrow">↕</div>
+                        <div class="text-center text-sm text-gray-400">NAT & Firewall</div>
+                    </div>
+                    <div class="arch-arrow">↕</div>
+                    <div class="text-center text-gray-400 font-semibold">الإنترنت / الشبكة المحلية</div>
                 </div>
             </div>
         </div>
-    </footer>
+    </section>
 
-    <!-- Zain Cash QR Modal -->
-    <div id="zain-cash-modal" class="qr-modal">
-        <div class="qr-content">
-            <span class="close-modal" onclick="closeModal('zain-cash-modal')">×</span>
-            <div class="account-number">07819597948</div>
-            <button class="copy-button" onclick="copyToClipboard('07819597948')">
-                <i class="fas fa-copy"></i> نسخ الرقم
-            </button>
-            <div class="qr-code">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=07819597948" alt="Zain Cash QR Code">
+    <!-- Installation Steps -->
+    <section id="installation" class="py-20 bg-darker">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <span class="text-accent font-semibold text-sm uppercase tracking-wider">التنفيذ</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-white mt-2">خطوات التثبيت</h2>
+                <div class="w-24 h-1 bg-accent mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="space-y-8">
+
+                <!-- Step 1 -->
+                <div class="step-card bg-dark rounded-2xl p-8" data-aos="fade-up">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white font-bold text-xl shrink-0">1</div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white">تفعيل ميزة الحاويات (Container Mode)</h3>
+                            <p class="text-gray-400">تمكين بيئة تشغيل الحاويات على RouterOS</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-darker rounded-xl p-6 mb-4">
+                        <div class="flex items-center justify-between mb-3">
+                            <span class="text-sm text-gray-400">RouterOS CLI</span>
+                            <span class="text-xs bg-yellow-500/20 text-yellow-500 px-2 py-1 rounded">يتطلب إعادة تشغيل</span>
+                        </div>
+                        <pre><code class="language-bash">/system/device-mode/update container=yes</code></pre>
+                    </div>
+
+                    <div class="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4 mb-4">
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-exclamation-triangle text-yellow-500 mt-1"></i>
+                            <div class="text-sm text-gray-300">
+                                <strong class="text-yellow-500">ملاحظة مهمة:</strong>
+                                <ul class="list-disc list-inside mt-2 space-y-1 mr-4">
+                                    <li>قد يطلب منك الراوتر <strong>تأكيداً فيزيائياً</strong> عن طريق فصل الطاقة وإعادة تشغيلها</li>
+                                    <li>سيقوم الراوتر بإعادة الإقلاع تلقائياً بعد التفعيل</li>
+                                    <li>تأكد من حفظ الإعدادات قبل تنفيذ هذا الأمر</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-800/50 rounded-xl p-4">
+                        <p class="text-sm text-gray-400 mb-2">التحقق من التفعيل:</p>
+                        <pre><code class="language-bash">/system/device-mode/print</code></pre>
+                        <p class="text-sm text-gray-400 mt-2">يجب أن تظهر النتيجة: <code class="bg-dark px-2 py-1 rounded text-accent">container: yes</code></p>
+                    </div>
+                </div>
+
+                <!-- Step 2 -->
+                <div class="step-card bg-dark rounded-2xl p-8" data-aos="fade-up">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white font-bold text-xl shrink-0">2</div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white">إعداد الشبكة الافتراضية (VETH & Bridge)</h3>
+                            <p class="text-gray-400">إنشاء كارت شبكة افتراضي وجسر لعزل حركة المرور</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="bg-darker rounded-xl p-6">
+                            <p class="text-sm text-gray-400 mb-2">1. إنشاء VETH Interface:</p>
+                            <pre><code class="language-bash">/interface veth add name=veth-sasman address=172.17.0.2/24 gateway=172.17.0.1</code></pre>
+                        </div>
+
+                        <div class="bg-darker rounded-xl p-6">
+                            <p class="text-sm text-gray-400 mb-2">2. إنشاء Bridge:</p>
+                            <pre><code class="language-bash">/interface bridge add name=bridge-container</code></pre>
+                        </div>
+
+                        <div class="bg-darker rounded-xl p-6">
+                            <p class="text-sm text-gray-400 mb-2">3. ربط VETH بالـ Bridge:</p>
+                            <pre><code class="language-bash">/interface bridge port add bridge=bridge-container interface=veth-sasman</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 bg-gray-800/50 rounded-xl p-4">
+                        <p class="text-sm text-gray-400 mb-2">التحقق:</p>
+                        <pre><code class="language-bash">/interface veth print
+/interface bridge print
+/interface bridge port print</code></pre>
+                    </div>
+                </div>
+
+                <!-- Step 3 -->
+                <div class="step-card bg-dark rounded-2xl p-8" data-aos="fade-up">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white font-bold text-xl shrink-0">3</div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white">تعيين عنوان الـ Gateway</h3>
+                            <p class="text-gray-400">إضافة الآي بي الافتراضي على الـ Bridge</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-darker rounded-xl p-6 mb-4">
+                        <pre><code class="language-bash">/ip address add address=172.17.0.1/24 interface=bridge-container</code></pre>
+                    </div>
+
+                    <div class="bg-gray-800/50 rounded-xl p-4">
+                        <p class="text-sm text-gray-400 mb-2">التحقق:</p>
+                        <pre><code class="language-bash">/ip address print</code></pre>
+                        <p class="text-sm text-gray-400 mt-2">يجب أن ترى: <code class="bg-dark px-2 py-1 rounded text-accent">172.17.0.1/24 bridge-container</code></p>
+                    </div>
+                </div>
+
+                <!-- Step 4 -->
+                <div class="step-card bg-dark rounded-2xl p-8" data-aos="fade-up">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white font-bold text-xl shrink-0">4</div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white">إعدادات جدار الحماية (NAT & Port Forwarding)</h3>
+                            <p class="text-gray-400">السماح بالوصول وتوجيه البورتات</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-4">
+                        <div class="bg-darker rounded-xl p-6">
+                            <p class="text-sm text-gray-400 mb-2">1. السماح للحاوية بالوصول إلى الإنترنت (Masquerade):</p>
+                            <pre><code class="language-bash">/ip firewall nat add chain=srcnat src-address=172.17.0.0/24 action=masquerade comment="Container Internet Access"</code></pre>
+                        </div>
+
+                        <div class="bg-darker rounded-xl p-6">
+                            <p class="text-sm text-gray-400 mb-2">2. توجيه بورت الإدارة (88 → 80):</p>
+                            <pre><code class="language-bash">/ip firewall nat add chain=dstnat dst-port=88 protocol=tcp action=dst-nat \
+  to-addresses=172.17.0.2 to-ports=80 comment="SASMAN Web Panel"</code></pre>
+                        </div>
+
+                        <div class="bg-darker rounded-xl p-6">
+                            <p class="text-sm text-gray-400 mb-2">3. توجيه بورتات RADIUS:</p>
+                            <pre><code class="language-bash"># بورت المصادقة (Authentication)
+/ip firewall nat add chain=dstnat dst-port=1812 protocol=udp action=dst-nat \
+  to-addresses=172.17.0.2 to-ports=1812 comment="RADIUS Auth"
+
+# بورت المحاسبة (Accounting)
+/ip firewall nat add chain=dstnat dst-port=1813 protocol=udp action=dst-nat \
+  to-addresses=172.17.0.2 to-ports=1813 comment="RADIUS Acct"</code></pre>
+                        </div>
+
+                        <div class="bg-darker rounded-xl p-6">
+                            <p class="text-sm text-gray-400 mb-2">4. السماح بـ RADIUS في Firewall (اختياري):</p>
+                            <pre><code class="language-bash">/ip firewall filter add chain=input action=accept protocol=udp \
+  dst-port=1812,1813 comment="Allow RADIUS"</code></pre>
+                        </div>
+                    </div>
+
+                    <div class="mt-4 bg-gray-800/50 rounded-xl p-4">
+                        <p class="text-sm text-gray-400 mb-2">التحقق:</p>
+                        <pre><code class="language-bash">/ip firewall nat print
+/ip firewall filter print</code></pre>
+                    </div>
+                </div>
+
+                <!-- Step 5 -->
+                <div class="step-card bg-dark rounded-2xl p-8" data-aos="fade-up">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-12 h-12 bg-primary rounded-full flex items-center justify-center text-white font-bold text-xl shrink-0">5</div>
+                        <div>
+                            <h3 class="text-2xl font-bold text-white">سحب وتشغيل حاوية Sasman Manager</h3>
+                            <p class="text-gray-400">تثبيت النظام على Disk داخلي أو USB خارجي</p>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-6 mb-6">
+                        <!-- Method 1 -->
+                        <div class="bg-darker rounded-xl p-6 border border-primary/30">
+                            <div class="flex items-center gap-2 mb-4">
+                                <i class="fas fa-hdd text-primary"></i>
+                                <h4 class="font-bold text-white">الطريقة الأولى: Disk الداخلي</h4>
+                            </div>
+                            <div class="space-y-3">
+                                <div>
+                                    <p class="text-xs text-gray-500 mb-1">1. تعيين مستودع Docker:</p>
+                                    <pre class="!p-3 !text-sm"><code class="language-bash">/container/config set registry-url=https://registry-1.docker.io</code></pre>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-500 mb-1">2. سحب وتثبيت الحاوية:</p>
+                                    <pre class="!p-3 !text-sm"><code class="language-bash">/container/add remote-image=ahmedkin99/sasman-manager:v5 \
+  interface=veth-sasman \
+  root-dir=disk1/sasman-data \
+  start-on-boot=yes \
+  logging=yes</code></pre>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Method 2 -->
+                        <div class="bg-darker rounded-xl p-6 border border-secondary/30">
+                            <div class="flex items-center gap-2 mb-4">
+                                <i class="fas fa-usb text-secondary"></i>
+                                <h4 class="font-bold text-white">الطريقة الثانية: USB خارجي</h4>
+                            </div>
+                            <div class="space-y-3">
+                                <div>
+                                    <p class="text-xs text-gray-500 mb-1">1. تهيئة USB:</p>
+                                    <pre class="!p-3 !text-sm"><code class="language-bash">/disk format usb1 file-system=ext4 label=usb-sasman mbr-partition-table=no</code></pre>
+                                    <p class="text-xs text-warning mt-1 font-semibold">⚠️ سيحذف كل البيانات على الـ USB!</p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-500 mb-1">2. إعداد Registry:</p>
+                                    <pre class="!p-3 !text-sm"><code class="language-bash">/container/config/set registry-url=https://registry-1.docker.io tmpdir=usb1/pull-tmp</code></pre>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-gray-500 mb-1">3. إنشاء الحاوية:</p>
+                                    <pre class="!p-3 !text-sm"><code class="language-bash">/container/add name=sasman-manager \
+  remote-image=ahmedkin99/sasman-manager:v5 \
+  interface=veth-sasman \
+  root-dir=usb1/sasman-data \
+  logging=yes \
+  start-on-boot=yes</code></pre>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="bg-gray-800/50 rounded-xl p-4">
+                        <p class="text-sm text-gray-400 mb-2">مراقبة التثبيت:</p>
+                        <pre><code class="language-bash">/container/print</code></pre>
+                        <p class="text-sm text-gray-400 mt-2">انتظر حتى تصبح الحالة: <code class="bg-dark px-2 py-1 rounded text-accent">status: running</code></p>
+                    </div>
+                </div>
+
             </div>
         </div>
-    </div>
+    </section>
 
-    <!-- Binance QR Modal -->
-    <div id="binance-modal" class="qr-modal">
-        <div class="qr-content">
-            <span class="close-modal" onclick="closeModal('binance-modal')">×</span>
-            <div class="account-number">500747355</div>
-            <button class="copy-button" onclick="copyToClipboard('500747355')">
-                <i class="fas fa-copy"></i> نسخ الرقم
-            </button>
-            <div class="qr-code">
-                <img src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=500747355" alt="Binance QR Code">
+    <!-- Verification Section -->
+    <section id="verification" class="py-20 bg-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <span class="text-accent font-semibold text-sm uppercase tracking-wider">التأكد</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-white mt-2">التحقق من التثبيت</h2>
+                <div class="w-24 h-1 bg-accent mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6">
+                <div class="bg-darker rounded-2xl p-6 border border-gray-800" data-aos="fade-up" data-aos-delay="0">
+                    <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-check-double text-primary text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-3">1. حالة الحاوية</h3>
+                    <pre class="!text-sm"><code class="language-bash">/container/print</code></pre>
+                    <div class="mt-3 text-sm text-gray-400">
+                        النتيجة المتوقعة:
+                        <div class="mt-2 space-y-1 text-xs">
+                            <div class="text-accent">name="sasman-manager"</div>
+                            <div class="text-accent">status: running</div>
+                            <div class="text-accent">remote-image: ahmedkin99/sasman-manager:v5</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-darker rounded-2xl p-6 border border-gray-800" data-aos="fade-up" data-aos-delay="100">
+                    <div class="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-network-wired text-secondary text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-3">2. الشبكة</h3>
+                    <pre class="!text-sm"><code class="language-bash">/ping 172.17.0.2 count=5</code></pre>
+                    <p class="mt-3 text-sm text-gray-400">يجب أن تكون الاستجابة ناجحة من الراوتر إلى الحاوية</p>
+                </div>
+
+                <div class="bg-darker rounded-2xl p-6 border border-gray-800" data-aos="fade-up" data-aos-delay="200">
+                    <div class="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center mb-4">
+                        <i class="fas fa-port-open text-accent text-xl"></i>
+                    </div>
+                    <h3 class="text-lg font-bold text-white mb-3">3. البورتات</h3>
+                    <pre class="!text-sm"><code class="language-bash">/ip firewall nat print where comment~"SASMAN|RADIUS"</code></pre>
+                    <p class="mt-3 text-sm text-gray-400">التحقق من وجود قواعد NAT للبورتات 88, 1812, 1813</p>
+                </div>
             </div>
         </div>
-    </div>
+    </section>
 
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <!-- Access Paths -->
+    <section id="access" class="py-20 bg-darker">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <span class="text-secondary font-semibold text-sm uppercase tracking-wider">الاستخدام</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-white mt-2">مسارات الوصول إلى لوحات التحكم</h2>
+                <div class="w-24 h-1 bg-secondary mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="max-w-3xl mx-auto space-y-6">
+                <div class="bg-dark rounded-2xl p-8 border border-primary/30" data-aos="fade-up">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-globe text-primary text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white">لوحة الإدارة الرئيسية</h3>
+                            <p class="text-gray-400">الوصول عبر المتصفح</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-darker rounded-xl p-6 mb-4">
+                        <p class="text-sm text-gray-400 mb-2">الرابط:</p>
+                        <div class="flex items-center gap-3">
+                            <code class="bg-dark px-4 py-3 rounded-lg text-accent font-mono text-lg flex-1">http://[IP-الراوتر]:88</code>
+                            <button onclick="copyToClipboard('http://192.168.1.1:88')" class="bg-gray-700 hover:bg-gray-600 text-white px-4 py-3 rounded-lg transition-colors tooltip" data-tip="نسخ">
+                                <i class="fas fa-copy"></i>
+                            </button>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-2">مثال: http://192.168.1.1:88</p>
+                    </div>
+
+                    <div class="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-4">
+                        <div class="flex items-start gap-3">
+                            <i class="fas fa-key text-yellow-500 mt-1"></i>
+                            <div>
+                                <p class="text-sm text-gray-300">
+                                    <strong class="text-yellow-500">معلومات تسجيل الدخول الافتراضية:</strong>
+                                </p>
+                                <div class="mt-2 grid grid-cols-2 gap-4 text-sm">
+                                    <div>
+                                        <span class="text-gray-500">اسم المستخدم:</span>
+                                        <span class="text-white font-mono mr-2">admin</span>
+                                    </div>
+                                    <div>
+                                        <span class="text-gray-500">كلمة المرور:</span>
+                                        <span class="text-white font-mono mr-2">admin</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-warning mt-3 font-semibold">⚠️ غيّر كلمة المرور فوراً بعد أول تسجيل دخول!</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-dark rounded-2xl p-8 border border-secondary/30" data-aos="fade-up">
+                    <div class="flex items-center gap-4 mb-6">
+                        <div class="w-14 h-14 bg-secondary/10 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-broadcast-tower text-secondary text-2xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-bold text-white">اختبار RADIUS من راوتر آخر</h3>
+                            <p class="text-gray-400">التحقق من عمل خادم RADIUS</p>
+                        </div>
+                    </div>
+
+                    <div class="space-y-3">
+                        <div class="bg-darker rounded-xl p-4">
+                            <p class="text-xs text-gray-500 mb-1">إضافة خادم RADIUS:</p>
+                            <pre class="!text-sm"><code class="language-bash">/radius/add address=[IP-الراوتر-الرئيسي] secret=123456 \
+  service=hotspot,ppp,login timeout=3s</code></pre>
+                        </div>
+                        <div class="bg-darker rounded-xl p-4">
+                            <p class="text-xs text-gray-500 mb-1">تفعيل الخادم:</p>
+                            <pre class="!text-sm"><code class="language-bash">/radius/enable [find address=[IP-الراوتر-الرئيسي]]</code></pre>
+                        </div>
+                        <div class="bg-darker rounded-xl p-4">
+                            <p class="text-xs text-gray-500 mb-1">اختبار الاتصال:</p>
+                            <pre class="!text-sm"><code class="language-bash">/radius/test address=[IP-الراوتر-الرئيسي] secret=123456 service=hotspot</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Troubleshooting -->
+    <section id="troubleshooting" class="py-20 bg-dark">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <span class="text-warning font-semibold text-sm uppercase tracking-wider">الحلول</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-white mt-2">استكشاف الأخطاء وإصلاحها</h2>
+                <div class="w-24 h-1 bg-gradient-to-r from-warning to-danger mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+                <!-- Problem 1 -->
+                <div class="bg-darker rounded-2xl p-6 border border-danger/30 hover:border-danger/60 transition-all hover:shadow-lg hover:shadow-danger/20" data-aos="fade-up">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-br from-danger/20 to-danger/10 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-times-circle text-danger"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white">الحاوية لا تعمل (status: stopped)</h3>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="bg-dark rounded-lg p-3">
+                            <p class="text-xs text-gray-500 mb-1">عرض السجلات:</p>
+                            <pre class="!text-sm"><code class="language-bash">/log print where topics~"container"</code></pre>
+                        </div>
+                        <div class="bg-dark rounded-lg p-3">
+                            <p class="text-xs text-gray-500 mb-1">إعادة تشغيل يدوياً:</p>
+                            <pre class="!text-sm"><code class="language-bash">/container/start [find name=sasman-manager]</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Problem 2 -->
+                <div class="bg-darker rounded-2xl p-6 border border-danger/30 hover:border-danger/60 transition-all hover:shadow-lg hover:shadow-danger/20" data-aos="fade-up" data-aos-delay="100">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-br from-danger/20 to-danger/10 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-times-circle text-danger"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white">لا يمكن الوصول إلى البورت 88</h3>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="bg-dark rounded-lg p-3">
+                            <p class="text-xs text-gray-500 mb-1">التحقق من NAT:</p>
+                            <pre class="!text-sm"><code class="language-bash">/ip firewall nat print where dst-port=88</code></pre>
+                        </div>
+                        <div class="bg-dark rounded-lg p-3">
+                            <p class="text-xs text-gray-500 mb-1">التحقق من ping:</p>
+                            <pre class="!text-sm"><code class="language-bash">/ping 172.17.0.2</code></pre>
+                        </div>
+                        <div class="bg-dark rounded-lg p-3">
+                            <p class="text-xs text-gray-500 mb-1">التحقق من Firewall:</p>
+                            <pre class="!text-sm"><code class="language-bash">/ip firewall filter print where chain=forward</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Problem 3 -->
+                <div class="bg-darker rounded-2xl p-6 border border-danger/30 hover:border-danger/60 transition-all hover:shadow-lg hover:shadow-danger/20" data-aos="fade-up">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-br from-danger/20 to-danger/10 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-times-circle text-danger"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white">RADIUS لا يستجيب</h3>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="bg-dark rounded-lg p-3">
+                            <p class="text-xs text-gray-500 mb-1">التحقق من UDP Ports:</p>
+                            <pre class="!text-sm"><code class="language-bash">/ip firewall nat print where dst-port~"1812|1813"</code></pre>
+                        </div>
+                        <div class="bg-dark rounded-lg p-3">
+                            <p class="text-xs text-gray-500 mb-1">التحقق من الاتصال:</p>
+                            <pre class="!text-sm"><code class="language-bash">/tool/netwatch add host=172.17.0.2 interval=10s</code></pre>
+                        </div>
+                        <div class="bg-dark rounded-lg p-3">
+                            <p class="text-xs text-gray-500 mb-1">اختبار RADIUS:</p>
+                            <pre class="!text-sm"><code class="language-bash">/radius/test address=[IP] secret=123456 service=hotspot</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Problem 4 -->
+                <div class="bg-darker rounded-2xl p-6 border border-danger/30 hover:border-danger/60 transition-all hover:shadow-lg hover:shadow-danger/20" data-aos="fade-up" data-aos-delay="100">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-br from-danger/20 to-danger/10 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-times-circle text-danger"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white">نفاد مساحة التخزين</h3>
+                    </div>
+                    <div class="space-y-3">
+                        <div class="bg-dark rounded-lg p-3">
+                            <p class="text-xs text-gray-500 mb-1">فحص المساحة:</p>
+                            <pre class="!text-sm"><code class="language-bash">/disk print</code></pre>
+                        </div>
+                        <div class="bg-dark rounded-lg p-3">
+                            <p class="text-xs text-gray-500 mb-1">حذف صور قديمة:</p>
+                            <pre class="!text-sm"><code class="language-bash">/container/remove [find where status=stopped]</code></pre>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Problem 5 -->
+                <div class="bg-darker rounded-2xl p-6 border border-danger/30 hover:border-danger/60 transition-all md:col-span-2 hover:shadow-lg hover:shadow-danger/20" data-aos="fade-up">
+                    <div class="flex items-center gap-3 mb-4">
+                        <div class="w-10 h-10 bg-gradient-to-br from-danger/20 to-danger/10 rounded-lg flex items-center justify-center">
+                            <i class="fas fa-times-circle text-danger"></i>
+                        </div>
+                        <h3 class="text-lg font-bold text-white">الحاوية لا تبدأ تلقائياً بعد إعادة التشغيل</h3>
+                    </div>
+                    <div class="bg-dark rounded-lg p-4">
+                        <pre class="!text-sm"><code class="language-bash">/container set [find name=sasman-manager] start-on-boot=yes</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Management Commands -->
+    <section id="commands" class="py-20 bg-darker">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <span class="text-primary font-semibold text-sm uppercase tracking-wider">الإدارة</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-white mt-2">أوامر إدارة مفيدة</h2>
+                <div class="w-24 h-1 bg-primary mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="bg-dark rounded-xl p-6 border border-gray-800 hover:border-primary/50 transition-all" data-aos="fade-up">
+                    <div class="w-10 h-10 bg-yellow-500/10 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-pause text-yellow-500"></i>
+                    </div>
+                    <h3 class="font-bold text-white mb-2">إيقاف الحاوية مؤقتاً</h3>
+                    <pre class="!text-sm"><code class="language-bash">/container/stop [find name=sasman-manager]</code></pre>
+                </div>
+
+                <div class="bg-dark rounded-xl p-6 border border-gray-800 hover:border-primary/50 transition-all" data-aos="fade-up" data-aos-delay="50">
+                    <div class="w-10 h-10 bg-green-500/10 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-play text-green-500"></i>
+                    </div>
+                    <h3 class="font-bold text-white mb-2">إعادة تشغيل</h3>
+                    <pre class="!text-sm"><code class="language-bash">/container/start [find name=sasman-manager]</code></pre>
+                </div>
+
+                <div class="bg-dark rounded-xl p-6 border border-gray-800 hover:border-primary/50 transition-all" data-aos="fade-up" data-aos-delay="100">
+                    <div class="w-10 h-10 bg-red-500/10 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-trash text-red-500"></i>
+                    </div>
+                    <h3 class="font-bold text-white mb-2">حذف الحاوية (بدون بيانات)</h3>
+                    <pre class="!text-sm"><code class="language-bash">/container/remove [find name=sasman-manager]</code></pre>
+                </div>
+
+                <div class="bg-dark rounded-xl p-6 border border-gray-800 hover:border-red-500/50 transition-all" data-aos="fade-up" data-aos-delay="150">
+                    <div class="w-10 h-10 bg-red-500/10 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-trash-alt text-red-500"></i>
+                    </div>
+                    <h3 class="font-bold text-white mb-2">حذف كامل (مع البيانات)</h3>
+                    <pre class="!text-sm"><code class="language-bash">/container/remove [find name=sasman-manager]
+/file remove [find name~"sasman-data"]</code></pre>
+                </div>
+
+                <div class="bg-dark rounded-xl p-6 border border-gray-800 hover:border-secondary/50 transition-all md:col-span-2 lg:col-span-2" data-aos="fade-up" data-aos-delay="200">
+                    <div class="w-10 h-10 bg-secondary/10 rounded-lg flex items-center justify-center mb-4">
+                        <i class="fas fa-sync-alt text-secondary"></i>
+                    </div>
+                    <h3 class="font-bold text-white mb-2">تحديث الحاوية</h3>
+                    <div class="space-y-2">
+                        <pre class="!text-sm"><code class="language-bash"># إيقاف القديم
+/container/stop [find name=sasman-manager]
+
+# حذف القديم
+/container/remove [find name=sasman-manager]
+
+# سحب النسخة الجديدة
+/container/add remote-image=ahmedkin99/sasman-manager:v5 \
+  interface=veth-sasman \
+  root-dir=disk1/sasman-data \
+  start-on-boot=yes</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FAQ Section -->
+    <section id="faq" class="py-20 bg-dark">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-16" data-aos="fade-up">
+                <span class="text-secondary font-semibold text-sm uppercase tracking-wider">الأسئلة</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-white mt-2">الأسئلة الشائعة</h2>
+                <div class="w-24 h-1 bg-secondary mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="space-y-4">
+                <!-- FAQ 1 -->
+                <div class="bg-darker rounded-xl border border-gray-800 overflow-hidden" data-aos="fade-up">
+                    <button class="faq-btn w-full px-6 py-4 flex items-center justify-between text-right hover:bg-gray-800/50 transition-colors">
+                        <span class="font-bold text-white">هل يمكن تشغيل أكثر من حاوية؟</span>
+                        <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                    </button>
+                    <div class="faq-content px-6">
+                        <div class="pb-4 text-gray-300 leading-relaxed">
+                            نعم، لكن يجب:
+                            <ul class="list-disc list-inside mt-2 mr-4 space-y-1 text-gray-400">
+                                <li>إنشاء VETH منفصل لكل حاوية</li>
+                                <li>استخدام IPs مختلفة (مثل: 172.17.0.3، 172.17.0.4)</li>
+                                <li>تعيين Ports مختلفة في NAT</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 2 -->
+                <div class="bg-darker rounded-xl border border-gray-800 overflow-hidden" data-aos="fade-up">
+                    <button class="faq-btn w-full px-6 py-4 flex items-center justify-between text-right hover:bg-gray-800/50 transition-colors">
+                        <span class="font-bold text-white">هل تؤثر الحاوية على أداء الراوتر؟</span>
+                        <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                    </button>
+                    <div class="faq-content px-6">
+                        <div class="pb-4 text-gray-300 leading-relaxed">
+                            التأثير ضئيل جداً! الحاوية مبنية على SQLite وتستهلك:
+                            <ul class="list-disc list-inside mt-2 mr-4 space-y-1 text-gray-400">
+                                <li>RAM: <strong class="text-green-400">64 MB فقط</strong></li>
+                                <li>مساحة: <strong class="text-green-400">200 MB فقط</strong></li>
+                                <li>CPU: استهلاك منخفض جداً</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 3 -->
+                <div class="bg-darker rounded-xl border border-gray-800 overflow-hidden" data-aos="fade-up">
+                    <button class="faq-btn w-full px-6 py-4 flex items-center justify-between text-right hover:bg-gray-800/50 transition-colors">
+                        <span class="font-bold text-white">كيف أعمل نسخة احتياطية؟</span>
+                        <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                    </button>
+                    <div class="faq-content px-6">
+                        <div class="pb-4 text-gray-300 leading-relaxed">
+                            <pre class="!text-sm mb-2"><code class="language-bash">/file print detail where name~"sasman-data"</code></pre>
+                            <p class="text-gray-400">يُنصح بنسخ المجلد بالكامل عبر FTP/SFTP</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 4 -->
+                <div class="bg-darker rounded-xl border border-gray-800 overflow-hidden" data-aos="fade-up">
+                    <button class="faq-btn w-full px-6 py-4 flex items-center justify-between text-right hover:bg-gray-800/50 transition-colors">
+                        <span class="font-bold text-white">هل يمكن الوصول من الإنترنت؟</span>
+                        <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                    </button>
+                    <div class="faq-content px-6">
+                        <div class="pb-4 text-gray-300 leading-relaxed">
+                            <pre class="!text-sm mb-2"><code class="language-bash">/ip firewall nat add chain=dstnat dst-address-type=local \
+  protocol=tcp dst-port=88 action=dst-nat to-addresses=[IP-الراوتر]</code></pre>
+                            <p class="text-danger text-sm mt-2 font-semibold">⚠️ تحذير أمني: استخدم HTTPS و Firewall قوي!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- FAQ 5 -->
+                <div class="bg-darker rounded-xl border border-gray-800 overflow-hidden" data-aos="fade-up">
+                    <button class="faq-btn w-full px-6 py-4 flex items-center justify-between text-right hover:bg-gray-800/50 transition-colors">
+                        <span class="font-bold text-white">كيف أربط عدة راوترات بـ RADIUS واحد؟</span>
+                        <i class="fas fa-chevron-down text-gray-400 transition-transform"></i>
+                    </button>
+                    <div class="faq-content px-6">
+                        <div class="pb-4 text-gray-300 leading-relaxed">
+                            على كل راوتر ثانوي:
+                            <pre class="!text-sm mt-2"><code class="language-bash">/radius/add address=[IP-السيرفر-الرئيسي] secret=123456 \
+  service=hotspot,ppp,login
+
+/radius/enable [find address=[IP-السيرفر-الرئيسي]]</code></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Resources & Footer -->
+    <section class="py-20 bg-darker">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-12" data-aos="fade-up">
+                <span class="text-accent font-semibold text-sm uppercase tracking-wider">المصادر</span>
+                <h2 class="text-3xl md:text-4xl font-bold text-white mt-2">مصادر إضافية</h2>
+                <div class="w-24 h-1 bg-accent mx-auto mt-4 rounded-full"></div>
+            </div>
+
+            <div class="grid md:grid-cols-3 gap-6 mb-16">
+                <a href="https://help.mikrotik.com/docs/display/ROS/Container" target="_blank" class="bg-dark rounded-2xl p-6 border border-gray-800 hover:border-primary/50 transition-all group" data-aos="fade-up">
+                    <div class="w-12 h-12 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                        <i class="fas fa-book text-primary text-xl"></i>
+                    </div>
+                    <h3 class="font-bold text-white mb-2">توثيق MikroTik Container</h3>
+                    <p class="text-sm text-gray-400">الدليل الرسمي لإعداد الحاويات على RouterOS</p>
+                </a>
+
+                <a href="https://help.mikrotik.com/docs/display/ROS/RADIUS" target="_blank" class="bg-dark rounded-2xl p-6 border border-gray-800 hover:border-secondary/50 transition-all group" data-aos="fade-up" data-aos-delay="100">
+                    <div class="w-12 h-12 bg-secondary/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-secondary/20 transition-colors">
+                        <i class="fas fa-book text-secondary text-xl"></i>
+                    </div>
+                    <h3 class="font-bold text-white mb-2">دليل RADIUS الرسمي</h3>
+                    <p class="text-sm text-gray-400">إعداد خادم RADIUS على MikroTik</p>
+                </a>
+
+                <a href="https://hub.docker.com/r/ahmedkin99/sasman-manager" target="_blank" class="bg-dark rounded-2xl p-6 border border-gray-800 hover:border-accent/50 transition-all group" data-aos="fade-up" data-aos-delay="200">
+                    <div class="w-12 h-12 bg-accent/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-accent/20 transition-colors">
+                        <i class="fab fa-docker text-accent text-xl"></i>
+                    </div>
+                    <h3 class="font-bold text-white mb-2">Docker Hub</h3>
+                    <p class="text-sm text-gray-400">Sasman Manager Image على Docker Hub</p>
+                </a>
+            </div>
+
+            <!-- Footer -->
+            <div class="border-t border-gray-800/50 pt-12 text-center mt-12">
+                <div class="flex justify-center gap-6 mb-8">
+                    <div class="group flex items-center gap-2 text-gray-400 text-sm hover:text-primary transition-colors">
+                        <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                            <i class="fas fa-microchip text-primary"></i>
+                        </div>
+                        <span class="font-medium">Powered by MikroTik</span>
+                    </div>
+                    <div class="group flex items-center gap-2 text-gray-400 text-sm hover:text-secondary transition-colors">
+                        <div class="w-8 h-8 bg-secondary/10 rounded-lg flex items-center justify-center group-hover:bg-secondary/20 transition-colors">
+                            <i class="fab fa-docker text-secondary"></i>
+                        </div>
+                        <span class="font-medium">Runs on Docker</span>
+                    </div>
+                </div>
+                <div class="mb-4">
+                    <span class="gradient-text text-2xl font-bold">Sasman Manager V5</span>
+                </div>
+                <p class="text-gray-500 text-sm mb-2">
+                    © 2024 - جميع الحقوق محفوظة
+                </p>
+                <p class="text-gray-600 text-sm">
+                    ✨ نتمنى لك تجربة ممتازة! ✨
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Back to Top Button -->
+    <button id="backToTop" class="fixed bottom-8 left-8 bg-gradient-to-br from-primary to-secondary hover:from-secondary hover:to-primary text-white w-14 h-14 rounded-full shadow-lg shadow-primary/50 hover:shadow-primary/70 flex items-center justify-center transition-all transform translate-y-20 opacity-0 z-50 hover:scale-110">
+        <i class="fas fa-arrow-up text-lg"></i>
+    </button>
+
     <script>
-        // Initialize AOS
+        // Initialize AOS Animation
         AOS.init({
             duration: 800,
-            easing: 'ease-in-out',
             once: true,
-            mirror: false
+            offset: 100
         });
 
-        // Language Switcher
-        const translations = {
-            ar: {
-                about: "عن التطبيق",
-                packages: "الباقات والأسعار",
-                payment: "طرق الدفع",
-                contact: "معلومات الاتصال",
-                faq: "الأسئلة الشائعة",
-                privacy: "سياسة الخصوصية والشروط والأحكام",
-                heroTitle: "ISP MANAGER",
-                heroDesc: "تطبيق احترافي لإدارة مشتركين الانترنت وتسهيل عمليات الاشتراك والدفع",
-                subscribe: "اشترك الآن",
-                sendWhatsapp: "إرسال واتساب",
-                sendWhatsappTitle: "أرسل رسالة واتساب",
-                joinTelegram: "انضم إلى القناة",
-                joinTelegramTitle: "انضم إلى قناتنا على تيليجرام",
-                telegramDesc: "انضم إلى قناتنا على تيليجرام للحصول على أحدث تحديثات التطبيق والمساعدة الفنية والمزيد من الميزات الحصرية.",
-                faqQuestions: [
-                    { question: "كيف يمكنني الاشتراك في التطبيق؟", answer: "يمكنك الاشتراك عبر اختيار الباقة المناسبة من قسم الباقات ثم اتباع خطوات الدفع الإلكتروني." },
-                    { question: "هل يوجد دعم فني متواصل؟", answer: "نعم، يوفر التطبيق دعم فني على مدار الساعة عبر وسائل التواصل المتاحة." },
-                    { question: "هل يمكنني تغيير الباقة لاحقاً؟", answer: "بإمكانك تغيير الباقة في أي وقت من خلال إعدادات التطبيق واختيار الباقة الجديدة." },
-                    { question: "هل بياناتي آمنة؟", answer: "نعم، جميع بيانات المستخدمين محمية وفق أحدث معايير الأمان والخصوصية." }
-                ],
-                privacyTitle: "سياسة الخصوصية والشروط والأحكام",
-                privacyText: "نحن ملتزمون بحماية خصوصية مستخدمينا. جميع البيانات الشخصية التي يتم جمعها عبر التطبيق تُستخدم فقط لتحسين الخدمة ولا يتم مشاركتها مع أي طرف ثالث.",
-                termsTitle: "الشروط والأحكام",
-                termsList: [
-                    "استخدام التطبيق متاح فقط للأغراض القانونية والمسموح بها.",
-                    "يجب على المستخدمين الحفاظ على سرية بيانات الدخول وعدم مشاركتها مع الآخرين.",
-                    "يحق لإدارة التطبيق تحديث أو تعديل الشروط والأحكام في أي وقت.",
-                    "أي إساءة استخدام للتطبيق تعرض المستخدم للحظر أو إيقاف الخدمة."
-                ]
-            },
-            en: {
-                about: "About App",
-                packages: "Packages & Pricing",
-                payment: "Payment Methods",
-                contact: "Contact Info",
-                faq: "FAQ",
-                privacy: "Privacy Policy & Terms",
-                heroTitle: "ISP MANAGER",
-                heroDesc: "A professional app for managing internet subscribers and facilitating subscription and payment.",
-                subscribe: "Subscribe Now",
-                sendWhatsapp: "Send WhatsApp",
-                sendWhatsappTitle: "Send WhatsApp Message",
-                joinTelegram: "Join Channel",
-                joinTelegramTitle: "Join our Telegram Channel",
-                telegramDesc: "Join our Telegram channel for the latest app updates, technical support, and exclusive features.",
-                faqQuestions: [
-                    { question: "How can I subscribe to the app?", answer: "You can subscribe by choosing the appropriate package from the packages section and following the electronic payment steps." },
-                    { question: "Is there continuous technical support?", answer: "Yes, the app provides technical support 24/7 through available communication channels." },
-                    { question: "Can I change the package later?", answer: "You can change the package at any time through the app settings and choosing the new package." },
-                    { question: "Are my data secure?", answer: "Yes, all user data is protected according to the latest security and privacy standards." }
-                ],
-                privacyTitle: "Privacy Policy & Terms",
-                privacyText: "We are committed to protecting our users' privacy. All personal data collected through the app is used only to improve the service and is not shared with any third party.",
-                termsTitle: "Terms & Conditions",
-                termsList: [
-                    "Use of the app is only for legal and permitted purposes.",
-                    "Users must maintain the confidentiality of login data and not share it with others.",
-                    "The app administration has the right to update or modify the terms and conditions at any time.",
-                    "Any misuse of the app will result in the user being banned or service suspended."
-                ]
+        // Mobile Menu Toggle
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const closeMobileMenu = document.getElementById('closeMobileMenu');
+
+        mobileMenuBtn.addEventListener('click', () => {
+            mobileMenu.classList.add('open');
+        });
+
+        closeMobileMenu.addEventListener('click', () => {
+            mobileMenu.classList.remove('open');
+        });
+
+        // Close mobile menu when clicking on links
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.remove('open');
+            });
+        });
+
+        // Progress Bar
+        window.addEventListener('scroll', () => {
+            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
+            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+            const scrolled = (winScroll / height) * 100;
+            document.getElementById('progressBar').style.width = scrolled + '%';
+
+            // Back to Top Button
+            const backToTop = document.getElementById('backToTop');
+            if (winScroll > 500) {
+                backToTop.classList.remove('translate-y-20', 'opacity-0');
+            } else {
+                backToTop.classList.add('translate-y-20', 'opacity-0');
             }
-        };
-
-        let currentLang = 'ar';
-        let currentDir = 'rtl';
-
-        function setLanguage(lang) {
-            currentLang = lang;
-            currentDir = lang === 'ar' ? 'rtl' : 'ltr';
-            
-            // Update document direction and language
-            document.documentElement.dir = currentDir;
-            document.documentElement.lang = lang;
-            
-            // Update active language button
-            document.getElementById('lang-ar').classList.toggle('active', lang === 'ar');
-            document.getElementById('lang-en').classList.toggle('active', lang === 'en');
-            
-            // Update all text content
-            const t = translations[lang];
-            
-            // Update navigation
-            document.querySelectorAll('nav a').forEach((link, index) => {
-                const keys = ['about', 'packages', 'payment', 'contact'];
-                if (t[keys[index]]) {
-                    link.textContent = t[keys[index]];
-                }
-            });
-            
-            // Update hero section
-            document.querySelector('.hero-title').textContent = t.heroTitle;
-            document.querySelector('header p').textContent = t.heroDesc;
-            
-            // Update buttons
-            document.querySelectorAll('.btn-primary').forEach(btn => {
-                if (btn.textContent.includes('اشترك') || btn.textContent.includes('Subscribe')) {
-                    btn.textContent = t.subscribe;
-                }
-            });
-            
-            // Update contact section
-            document.querySelector('#whatsappForm h4').textContent = t.sendWhatsappTitle;
-            document.querySelector('#whatsappForm button').textContent = t.sendWhatsapp;
-            document.querySelector('#contact .fab.fa-telegram-plane + h3').textContent = t.joinTelegramTitle;
-            document.querySelector('#contact .fab.fa-telegram-plane + h3 + p').textContent = t.telegramDesc;
-            
-            // Update FAQ section
-            document.querySelector('#faq h2.section-title').textContent = t.faq;
-            const faqItems = document.querySelectorAll('.faq-item');
-            t.faqQuestions.forEach((faq, index) => {
-                if (faqItems[index]) {
-                    faqItems[index].querySelector('.faq-question span').textContent = faq.question;
-                    faqItems[index].querySelector('.faq-answer').textContent = faq.answer;
-                }
-            });
-            
-            // Update privacy section
-            document.querySelector('#privacy h2.section-title').textContent = t.privacyTitle;
-            document.querySelector('#privacy h3').textContent = t.privacyTitle;
-            document.querySelector('#privacy p').textContent = t.privacyText;
-            
-            const termsList = document.querySelector('#privacy ul');
-            termsList.innerHTML = '';
-            t.termsList.forEach(term => {
-                const li = document.createElement('li');
-                li.textContent = term;
-                termsList.appendChild(li);
-            });
-            
-            // Update mobile menu
-            document.querySelectorAll('#mobile-menu a').forEach((link, index) => {
-                const keys = ['about', 'packages', 'payment', 'contact'];
-                if (t[keys[index]]) {
-                    link.textContent = t[keys[index]];
-                }
-            });
-        }
-
-        // Language switcher event listeners
-        document.getElementById('lang-ar').addEventListener('click', function() {
-            setLanguage('ar');
         });
 
-        document.getElementById('lang-en').addEventListener('click', function() {
-            setLanguage('en');
+        document.getElementById('backToTop').addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
-        // Set default language
-        setLanguage('ar');
-
-        // Mobile menu toggle
-        document.getElementById('mobile-menu-button').addEventListener('click', function() {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('hidden');
-        });
-
-        // Smooth scrolling for navigation links
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    window.scrollTo({
-                        top: target.offsetTop - 80,
-                        behavior: 'smooth'
-                    });
-                    // Close mobile menu if open
-                    document.getElementById('mobile-menu').classList.add('hidden');
-                }
-            });
-        });
-
-        // QR Modal functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            // Zain Cash button
-            const zainCashBtn = document.getElementById('zain-cash-btn');
-            if (zainCashBtn) {
-                zainCashBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    document.getElementById('zain-cash-modal').classList.add('active');
+        // Copy to Clipboard for Code Blocks
+        document.querySelectorAll('pre').forEach(pre => {
+            const button = document.createElement('button');
+            button.className = 'copy-btn';
+            button.innerHTML = '<i class="fas fa-copy"></i> نسخ';
+            button.addEventListener('click', () => {
+                const code = pre.querySelector('code');
+                navigator.clipboard.writeText(code.innerText).then(() => {
+                    button.classList.add('copied');
+                    button.innerHTML = '<i class="fas fa-check"></i> تم النسخ';
+                    setTimeout(() => {
+                        button.classList.remove('copied');
+                        button.innerHTML = '<i class="fas fa-copy"></i> نسخ';
+                    }, 2000);
                 });
-            }
-
-            // Binance button
-            const binanceBtn = document.getElementById('binance-btn');
-            if (binanceBtn) {
-                binanceBtn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    document.getElementById('binance-modal').classList.add('active');
-                });
-            }
-
-            // Close modal functions
-            window.closeModal = function(modalId) {
-                const modal = document.getElementById(modalId);
-                if (modal) {
-                    modal.classList.remove('active');
-                }
-            };
-
-            // Close modals when clicking outside
-            window.addEventListener('click', function(event) {
-                if (event.target.classList.contains('qr-modal')) {
-                    event.target.classList.remove('active');
-                }
             });
-
-            // Close modals with Escape key
-            document.addEventListener('keydown', function(event) {
-                if (event.key === 'Escape') {
-                    document.querySelectorAll('.qr-modal.active').forEach(modal => {
-                        modal.classList.remove('active');
-                    });
-                }
-            });
+            pre.appendChild(button);
         });
 
-        // Copy to clipboard functionality
+        // Global Copy Function
         function copyToClipboard(text) {
-            const textArea = document.createElement("textarea");
-            textArea.value = text;
-            document.body.appendChild(textArea);
-            textArea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textArea);
-            
-            // Show notification
-            const notification = document.createElement('div');
-            notification.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50 flex items-center';
-            notification.innerHTML = '<i class="fas fa-check-circle ml-2"></i> تم نسخ الرقم بنجاح!';
-            document.body.appendChild(notification);
-            
-            setTimeout(() => {
-                notification.remove();
-            }, 3000);
+            navigator.clipboard.writeText(text).then(() => {
+                // Could show a toast here
+            });
         }
 
-        // Close modal when clicking outside of it
-        window.addEventListener('click', function(event) {
-            const zainModal = document.getElementById('zain-cash-modal');
-            const binanceModal = document.getElementById('binance-modal');
-            
-            if (event.target === zainModal) {
-                zainModal.classList.remove('active');
-            }
-            
-            if (event.target === binanceModal) {
-                binanceModal.classList.remove('active');
-            }
+        // FAQ Accordion
+        document.querySelectorAll('.faq-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const content = btn.nextElementSibling;
+                const icon = btn.querySelector('i');
+                const isActive = content.classList.contains('active');
+
+                // Close all
+                document.querySelectorAll('.faq-content').forEach(c => c.classList.remove('active'));
+                document.querySelectorAll('.faq-btn i').forEach(i => i.style.transform = 'rotate(0deg)');
+
+                // Open clicked if wasn't active
+                if (!isActive) {
+                    content.classList.add('active');
+                    icon.style.transform = 'rotate(180deg)';
+                }
+            });
         });
 
-        // FAQ accordion functionality
-        document.querySelectorAll('.faq-question').forEach(question => {
-            question.addEventListener('click', function() {
-                const answer = this.nextElementSibling;
-                const icon = this.querySelector('i');
-                
-                if (answer.style.display === 'block') {
-                    answer.style.display = 'none';
-                    icon.classList.remove('fa-chevron-up');
-                    icon.classList.add('fa-chevron-down');
-                } else {
-                    // Close all other answers
-                    document.querySelectorAll('.faq-answer').forEach(a => {
-                        a.style.display = 'none';
-                    });
-                    document.querySelectorAll('.faq-question i').forEach(i => {
-                        i.classList.remove('fa-chevron-up');
-                        i.classList.add('fa-chevron-down');
-                    });
-                    
-                    // Show clicked answer
-                    answer.style.display = 'block';
-                    icon.classList.remove('fa-chevron-down');
-                    icon.classList.add('fa-chevron-up');
+        // Active Navigation Link
+        const sections = document.querySelectorAll('section[id]');
+        const navLinks = document.querySelectorAll('nav a[href^="#"]');
+
+        window.addEventListener('scroll', () => {
+            let current = '';
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                if (scrollY >= sectionTop - 200) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navLinks.forEach(link => {
+                link.classList.remove('text-primary');
+                if (link.getAttribute('href') === '#' + current) {
+                    link.classList.add('text-primary');
                 }
             });
         });
